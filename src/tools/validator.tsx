@@ -1,7 +1,7 @@
 // Some data field validator
 
 /**
- * For validators, return error message if there is an error in the data, else return undefined
+ * For validators, return exceptions message if there is an exceptions in the data, else return undefined
  */
 
 /**

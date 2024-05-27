@@ -4,36 +4,54 @@ import {classNames} from "@/tools/css_tools";
 import React from "react";
 
 interface HeaderProps {
+  /**
+   * The Header Children which will be used as header title (and will become the clickable part.)
+   */
   children?: React.ReactNode;
   /**
    * Jump to this link when Header content has been clicked.
    */
   link?: string;
+  /**
+   * The content showed in the right of the header, will NOT jump to link when click.
+   */
+  content?: React.ReactNode;
 }
 
+/**
+ * Header components.
+ */
 export function Header(props: HeaderProps) {
   let {
     link,
     children,
+    content,
   } = props;
 
   return (
     // Responsive Margin
     <FlexDiv
-      className={classNames('p-0 md:p-2')}>
+      className={classNames('w-full p-0 md:p-2',
+        'transition-all')}>
 
       {/*Header Root Flex Div*/}
       <FlexDiv
         className={classNames(
           'bg-fgcolor dark:bg-fgcolor-dark',
           'w-full p-2 shadow-xl',
-          'md:rounded-xl'
+          'md:rounded-xl',
+          'transition-all',
+          'flex-row justify-between',
         )}>
 
         {/*Link Wrapper For Children Content*/}
         <Link href={link ?? '#'}>
           {children}
         </Link>
+
+        <FlexDiv>
+          {content}
+        </FlexDiv>
       </FlexDiv>
     </FlexDiv>
   );

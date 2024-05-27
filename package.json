@@ -10,10 +10,17 @@
   },
   "dependencies": {
     "antd": "^5.17.3",
+    "axios": "^1.7.2",
+    "chart.js": "^4.4.3",
+    "chartjs-adapter-dayjs-4": "^1.0.4",
+    "dayjs": "^1.11.11",
+    "duration": "^0.2.2",
     "next": "14.2.3",
     "react": "^18",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18",
-    "react-hot-toast": "^2.4.1"
+    "react-hot-toast": "^2.4.1",
+    "swr": "^2.2.5"
   },
   "devDependencies": {
     "@types/node": "^20",

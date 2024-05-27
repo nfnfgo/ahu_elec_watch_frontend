@@ -25,7 +25,8 @@ export function AdaptiveBackground(props: AdaptiveBackgroundProps) {
   return (
     <FlexDiv className={classNames(
       fullScreen ? 'h-screen w-screen' : 'h-full w-full',
-      'bg-bgcolor dark:bg-bgcolor-dark'
+      'bg-bgcolor dark:bg-bgcolor-dark',
+      'flex-col justify-start items-center',
     )}>
       {props.children}
     </FlexDiv>

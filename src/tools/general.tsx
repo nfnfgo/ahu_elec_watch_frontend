@@ -12,7 +12,7 @@ export function getKeyByValue(object: any, value: any) {
  * @param sleepMs Sleep time in milliseconds
  */
 export async function asyncSleep(sleepMs: number): Promise<void> {
-  await new Promise(r => setTimeout(r, 2000));
+  await new Promise(r => setTimeout(r, sleepMs));
   return;
 }
 
