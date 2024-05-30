@@ -39,8 +39,15 @@ export function AdaptiveBackground(props: AdaptiveBackgroundProps) {
       'dark:[color-scheme:dark]',
     )}>
       <ConfigProvider
-        theme={{
-          algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
+        theme={isDarkMode ? {
+          "token": {
+            "colorPrimary": "#0ea5e9",
+            "colorInfo": "#0ea5e9",
+            "colorBgBase": "#1e293b"
+          },
+          algorithm: theme.darkAlgorithm
+        } : {
+          algorithm: theme.defaultAlgorithm,
         }}>
         {props.children}
       </ConfigProvider>

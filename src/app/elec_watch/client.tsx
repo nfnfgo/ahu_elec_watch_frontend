@@ -112,7 +112,9 @@ export function Client() {
               )}>
 
               <FlexDiv className={classNames(
-                'flex-none justify-between',
+                'flex-none',
+                'flex-col justify-start items-center gap-y-2',
+                'sm:flex-row sm:justify-between sm:items-center',
               )}>
                 {/*Switch the time duration range of the graph*/}
                 <Segmented
