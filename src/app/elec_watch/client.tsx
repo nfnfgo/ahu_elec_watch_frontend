@@ -1,7 +1,8 @@
 'use client';
 
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import toast from 'react-hot-toast';
+import {Segmented} from 'antd';
 
 import {classNames} from "@/tools/css_tools";
 
@@ -22,12 +23,13 @@ export function Client() {
     error: balanceDataError,
   } = useGetBalance();
 
-  if (balanceDataError) {
-    toast(JSON.stringify(balanceDataError))
-    return (
-      <Center>ERROR</Center>
-    );
-  }
+  // Store graph days duration states
+  const [
+    graphShowDays,
+    setGraphShowDays] = useState<number>(3);
+
+  const [graphType, setGraphType]
+    = useState<'balance' | 'usage'>('balance');
 
   return (
     <FlexDiv
@@ -36,6 +38,7 @@ export function Client() {
         'flex-col flex-none',
         'justify-start items-center',
       )}>
+
       {/*Header Part*/}
       <Header
         link='/elec_watch_test'
@@ -48,52 +51,118 @@ export function Client() {
         <HeaderTitle>AHU Electrical Usage Monitor</HeaderTitle>
       </Header>
 
-      {/*Content Root Flex*/}
+      {/*Scrolling Root Div*/}
       <FlexDiv
+        expand
         className={classNames(
-          'flex-col flex-auto max-w-[80rem] w-full',
-          'justify-start items-center'
+          'flex-col justify-start items-center',
+          'flex-auto overflow-y-auto rounded-2xl',
         )}>
 
-        {/*Balance And Statistics*/}
+        {/*Content Root Div*/}
         <FlexDiv
           className={classNames(
-            'w-full',
-            'max-h-[15rem]',
-            'flex-row gap-x-2 p-2',
-            'sm:min-h-[10rem]',
-            'justify-center',
+            'flex-col max-w-[80rem] w-full',
+            'justify-start items-center',
           )}>
-          {/*Balance Monitor Block*/}
+
+          {/*Balance And Statistics*/}
           <FlexDiv
             className={classNames(
-              'flex-none flex-col sm:flex-row',
-              'gap-y-2 sm:gap-x-2',
-              'h-full',
-              'sm:min-w-[20rem]',
+              'w-full',
+              'max-h-[15rem]',
+              'flex-none',
+              'flex-row gap-x-2 p-2',
+              'sm:min-h-[10rem]',
+              'justify-center',
             )}>
-            <BalanceInfoBlock balanceType='light' isLoading={balanceDataIsLoading} value={balanceData?.light_balance}/>
-            <BalanceInfoBlock balanceType='ac' isLoading={balanceDataIsLoading} value={balanceData?.ac_balance}/>
+            {/*Balance Monitor Block*/}
+            <FlexDiv
+              className={classNames(
+                'flex-none flex-col sm:flex-row',
+                'gap-y-2 sm:gap-x-2',
+                'h-full',
+                'sm:min-w-[20rem]',
+              )}>
+              <BalanceInfoBlock balanceType='light' isLoading={balanceDataIsLoading}
+                                value={balanceData?.light_balance}/>
+              <BalanceInfoBlock balanceType='ac' isLoading={balanceDataIsLoading} value={balanceData?.ac_balance}/>
+            </FlexDiv>
+
+            {/*Statistic Part*/}
+            <FlexDiv className={classNames(
+              'max-w-[30rem] w-full',
+            )}>
+              <StatisticBlock/>
+            </FlexDiv>
           </FlexDiv>
 
-          {/*Statistic Part*/}
+          {/*Balance Usage Graph Part*/}
+          <FlexDiv
+            className={classNames(
+              'w-full flex-none',
+              'flex-col p-2',
+            )}>
+
+            <FlexDiv
+              className={classNames(
+                'w-full flex-col gap-y-2 p-2',
+                'bg-fgcolor dark:bg-fgcolor-dark',
+                'rounded-2xl',
+              )}>
+
+              <FlexDiv className={classNames(
+                'flex-none justify-between',
+              )}>
+                {/*Switch the time duration range of the graph*/}
+                <Segmented
+                  value={graphShowDays}
+                  size='large'
+                  options={[
+                    {
+                      label: '24 Hours',
+                      value: 1,
+                    },
+                    {
+                      label: '3 Days',
+                      value: 3
+                    },
+                    {
+                      label: 'Weekly',
+                      value: 7,
+                    },
+                    {
+                      label: 'Monthly',
+                      value: 30,
+                    },
+                  ]}
+                  onChange={setGraphShowDays}/>
+
+                <Segmented
+                  value={graphType}
+                  size='large'
+                  options={[{
+                    label: 'Balance',
+                    value: 'balance',
+                  },
+                    {
+                      label: 'Usage',
+                      value: 'usage',
+                    },]}
+                  onChange={setGraphType}/>
+              </FlexDiv>
+
+              <RecordsLineChart days={graphShowDays} graphType={graphType}/>
+            </FlexDiv>
+          </FlexDiv>
+
           <FlexDiv className={classNames(
-            'max-w-[30rem] w-full',
+            'h-[100rem] bg-red flex-none'
           )}>
-            <StatisticBlock/>
+            Test
           </FlexDiv>
-        </FlexDiv>
-
-        {/*Graph Part*/}
-        <FlexDiv
-          expand
-          className={classNames(
-            'flex-auto p-2'
-          )}>
-          <RecordsLineChart days={10} chartId='home_page_record_chart'/>
         </FlexDiv>
       </FlexDiv>
-
 
     </FlexDiv>
   );

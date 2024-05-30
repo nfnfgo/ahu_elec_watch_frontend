@@ -17,61 +17,73 @@ import dayjs from "dayjs";
 
 
 interface RecordsLineChartProps {
+  /**
+   * The days range of the info this graph will show. At least one day.
+   */
   days: number;
-  chartId: string;
+  /**
+   * Info type of this graph.
+   */
+  graphType?: 'balance' | 'usage';
 }
 
 export function RecordsLineChart(props: RecordsLineChartProps) {
-  let {
+  const {
     data: recordData,
     isLoading,
     error,
-  } = useGetRecentRecords(1);
+  } = useGetRecentRecords(props.days, props.graphType ?? 'balance');
 
-  const finalChartId = `record_chart_${props.chartId ?? 'default'}`;
   let canvasRef = useRef();
 
   return (
-    <Line
+    <FlexDiv
       className={classNames(
-        'flex-auto h-full bg-fgcolor dark:bg-fgcolor-dark p-4',
-        'rounded-2xl',
-      )}
-      ref={canvasRef}
-      options={{
-        backgroundColor:'transparent',
-        scales: {
-          x: {
-            ticks: {},
-            type: 'time',
-            time: {
-              minUnit: 'hour',
-              displayFormats: {},
+        'flex-none w-full h-[35rem]',
+      )}>
+      <Line
+        className={classNames(
+          'flex flex-auto h-full w-full bg-fgcolor dark:bg-fgcolor-dark p-4',
+          'rounded-2xl',
+        )}
+        ref={canvasRef}
+        options={{
+          responsive: true,
+          maintainAspectRatio: false,
+          backgroundColor: 'transparent',
+          scales: {
+            x: {
+              ticks: {},
+              type: 'time',
+              time: {
+                minUnit: 'hour',
+                displayFormats: {},
+              }
             }
-          }
-        },
-        plugins: {
-          tooltip: {
-            intersect: false,
-          }
-        },
-      }}
-      data={{
-        datasets: [
-          {
-            label: 'Illumination Usage',
-            data: recordData?.map((d) => (d.light_balance)) ?? [],
-            borderColor: 'rgba(10,186,0,0.54)',
-            backgroundColor: 'green',
           },
-          {
-            label: 'Air Conditioner Usage',
-            data: recordData?.map((d) => (d.ac_balance)) ?? [],
-            borderColor: 'rgba(0,123,172,0.54)',
-            backgroundColor: 'blue',
-          }
-        ],
-        labels: recordData?.map((d) => (d.timestamp * 1000)) ?? []
-      }}/>
+          plugins: {
+            tooltip: {
+              intersect: false,
+            }
+          },
+        }}
+        data={{
+          datasets: [
+            {
+              label: 'Illumination Usage',
+              data: recordData?.map((d) => (d.light_balance)) ?? [],
+              borderColor: 'rgba(10,186,0,0.54)',
+              backgroundColor: 'green',
+            },
+            {
+              label: 'Air Conditioner Usage',
+              data: recordData?.map((d) => (d.ac_balance)) ?? [],
+              borderColor: 'rgba(0,123,172,0.54)',
+              backgroundColor: 'blue',
+            }
+          ],
+          labels: recordData?.map((d) => (d.timestamp * 1000)) ?? []
+        }}/>
+    </FlexDiv>
   );
 }

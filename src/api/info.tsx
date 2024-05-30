@@ -12,10 +12,10 @@ export interface BalanceRecordIn {
 /**
  * Get the latest balance record that directly caught from AHU website.
  */
-export async function getBalance(): Promise<BalanceRecordIn> {
+export async function getLatestRecord(): Promise<BalanceRecordIn> {
   let data = undefined;
   try {
-    let res = await axiosIns.get('/info/lastest_record');
+    let res = await axiosIns.get('/info/latest_record');
     data = res.data;
   } catch (e) {
     apiErrorThrower(e);
@@ -24,7 +24,7 @@ export async function getBalance(): Promise<BalanceRecordIn> {
 }
 
 export function useGetBalance() {
-  return useSWR('/lastest_record', getBalance);
+  return useSWR('/lastest_record', getLatestRecord);
 }
 
 // export function useRbacPermissionListInfo(limit: number, cursor: number) {
@@ -66,7 +66,10 @@ export function useGetStatistics() {
 /**
  * Get recent records starting from several days ago.
  */
-export async function getRecentRecords(days: number): Promise<BalanceRecordIn[]> {
+export async function getRecentRecords(
+  days: number,
+  type: 'balance' | 'usage'
+): Promise<BalanceRecordIn[]> {
   if (days < 1) {
     throw new ParamError('You must at least get recent records starting from 1 day before.');
   }
@@ -75,7 +78,7 @@ export async function getRecentRecords(days: number): Promise<BalanceRecordIn[]>
   try {
     let res = await axiosIns.get(
       '/info/recent_records',
-      {params: {days}})
+      {params: {days, info_type: type}})
     ;
     data = res.data;
   } catch (e) {
@@ -85,7 +88,9 @@ export async function getRecentRecords(days: number): Promise<BalanceRecordIn[]>
   return data;
 }
 
-export function useGetRecentRecords(days: number) {
-  return useSWR(['/info/recent_records', days], (keys) => (getRecentRecords(keys[1])),
+export function useGetRecentRecords(days: number, type: 'balance' | 'usage') {
+  return useSWR(
+    ['/info/recent_records', days, type],
+    (keys) => (getRecentRecords(keys[1], keys[2])),
   );
 }

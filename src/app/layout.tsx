@@ -2,6 +2,7 @@ import type {Metadata} from "next";
 import {Inter} from "next/font/google";
 import "./globals.css";
 import {Toaster} from "react-hot-toast";
+import {AntdRegistry} from '@ant-design/nextjs-registry';
 
 import {AdaptiveBackground} from '@/components/background';
 
@@ -21,10 +22,13 @@ export default function RootLayout(
   return (
     <html lang="en">
     <body className={inter.className}>
-    <AdaptiveBackground>
-      <Toaster/>
-      {children}
-    </AdaptiveBackground>
+    {/*Add Ant Registry to avoid first loading page flicker*/}
+    <AntdRegistry>
+      <AdaptiveBackground>
+        <Toaster/>
+        {children}
+      </AdaptiveBackground>
+    </AntdRegistry>
     </body>
     </html>
   );

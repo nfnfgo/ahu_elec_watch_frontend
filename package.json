@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ant-design/nextjs-registry": "^1.0.0",
     "antd": "^5.17.3",
     "axios": "^1.7.2",
     "chart.js": "^4.4.3",

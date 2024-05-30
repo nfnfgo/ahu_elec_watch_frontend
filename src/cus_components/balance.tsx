@@ -32,6 +32,10 @@ export function BalanceInfoBlock(props: BalanceInfoBlockProps) {
 
   isLoading ??= false;
 
+  if (isLoading == false && value == undefined) {
+    value = -1;
+  }
+
   balanceType = setDefault(balanceType, 'light');
   let smBalanceTitle = balanceType == 'light' ? 'ILLUMI' : 'AIR COND';
   let lgBalanceTitle = balanceType == 'light' ? 'ILLUMINATION' : 'AIR CONDITIONER';
