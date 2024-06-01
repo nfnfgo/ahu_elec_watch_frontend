@@ -2,6 +2,7 @@
 
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import {Tooltip} from 'antd';
 
 import {BalanceRecordIn} from '@/api/info';
 import {FlexDiv} from "@/components/container";
@@ -61,15 +62,20 @@ export function LastUpdateInfoTag(props: LastUpdateInfoTagProps) {
   }
 
   return (
-    <FlexDiv className={classNames(
-      'rounded-xl px-2 py-1',
-      error ? 'bg-red/20 dark:bg-red-light/20' : '',
-      isLoading ? 'bg-grey/20' : '',
-      (!isLoading && !error) ? 'bg-blue/20 text-blue dark:text-blue-light' : '',
-    )}>
-      <p>
-        Last Update: <span className='whitespace-nowrap'>{getDurationString()}</span>
-      </p>
-    </FlexDiv>
+    <Tooltip
+      title='Current strategy is catch info from AHU website at the 30th minute of every hour.'
+      placement='bottomLeft'>
+      <FlexDiv className={classNames(
+        'rounded-xl px-2 py-1',
+        error ? 'bg-red/20 dark:bg-red-light/20' : '',
+        isLoading ? 'bg-grey/20' : '',
+        (!isLoading && !error) ? 'bg-blue/20 text-blue dark:text-blue-light' : '',
+      )}>
+        <p>
+          Last Update: <span className='whitespace-nowrap'>{getDurationString()}</span>
+        </p>
+      </FlexDiv>
+    </Tooltip>
   );
 }
+

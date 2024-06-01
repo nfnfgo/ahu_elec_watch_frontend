@@ -94,3 +94,44 @@ export function useGetRecentRecords(days: number, type: 'balance' | 'usage') {
     (keys) => (getRecentRecords(keys[1], keys[2])),
   );
 }
+
+/**
+ * For more info, please checkout API documents.
+ *
+ * All field has the same meaning as the one that the API returns.
+ */
+export interface DailyUsageInfoIn {
+  start_time: number;
+  end_time: number;
+  light_usage: number;
+  ac_usage: number;
+}
+
+export async function getDailyUsage(
+  days: number,
+  recent_on_top: boolean = true,
+): Promise<DailyUsageInfoIn[]> {
+  if (days < 1) {
+    throw new ParamError('You must at least get daily usage info list starting from 1 day back.');
+  }
+
+  let data = undefined;
+  try {
+    let res = await axiosIns.get(
+      '/info/daily_usage',
+      {params: {days, recent_on_top: recent_on_top}})
+    ;
+    data = res.data;
+  } catch (e) {
+    apiErrorThrower(e);
+  }
+
+  return data;
+}
+
+export function useGetDailyUsage(days: number, recent_on_top?: boolean) {
+  return useSWR(
+    ['/info/daily_usage', days, recent_on_top],
+    (keys) => (getDailyUsage(keys[1], keys[2])),
+  );
+}

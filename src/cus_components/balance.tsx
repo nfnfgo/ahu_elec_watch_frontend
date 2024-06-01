@@ -1,4 +1,5 @@
 import {classNames} from "@/tools/css_tools";
+import {Tooltip} from 'antd';
 
 import {FlexDiv, Container, Center} from '@/components/container';
 import {setDefault} from "@/tools/set_default";
@@ -42,54 +43,56 @@ export function BalanceInfoBlock(props: BalanceInfoBlockProps) {
 
 
   return (
-    // Root Container
-    <FlexDiv
-      expand
-      className={classNames(
-        'flex-col flex-auto justify-between',
-        'p-2 rounded-2xl',
-        (balanceType == 'light') ? 'bg-green' : 'bg-blue',
-        'text-white',
-        isLoading ? 'opacity-50' : '',
-      )}>
-
-      {/*Title Part*/}
-      <p className={classNames(
-        'text-white/50 sm:hidden'
-      )}>
-        {smBalanceTitle}
-      </p>
-
-      {/*Title Part*/}
-      <FlexDiv className='hidden sm:flex'>
-        <p className={classNames(
-          'text-white/50 '
-        )}>
-          {lgBalanceTitle}
-          <br/>
-          BALANCE
-        </p>
-      </FlexDiv>
-
-      {/*Value Part*/}
+    <Tooltip title='Current balance in account.'>
+      {/*Root Container*/}
       <FlexDiv
+        expand
         className={classNames(
-          'flex-none',
-          'flex-row sm:flex-col',
-          'justify-start items-start'
+          'flex-col flex-auto justify-between',
+          'p-2 rounded-2xl',
+          (balanceType == 'light') ? 'bg-green' : 'bg-blue',
+          'text-white',
+          isLoading ? 'opacity-50' : '',
         )}>
+
+        {/*Title Part*/}
         <p className={classNames(
-          'text-2xl sm:text-3xl',
-          'font-bold text-white',
+          'text-white/50 sm:hidden'
         )}>
-          {isLoading ? '- -' : value}
+          {smBalanceTitle}
         </p>
-        <p className={classNames(
-          'mx-1 text-white/70 font-bold',
-          'text-lg sm:text-xl',
-        )}>kW</p>
+
+        {/*Title Part*/}
+        <FlexDiv className='hidden sm:flex'>
+          <p className={classNames(
+            'text-white/50 '
+          )}>
+            {lgBalanceTitle}
+            <br/>
+            BALANCE
+          </p>
+        </FlexDiv>
+
+        {/*Value Part*/}
+        <FlexDiv
+          className={classNames(
+            'flex-none',
+            'flex-row sm:flex-col',
+            'justify-start items-start'
+          )}>
+          <p className={classNames(
+            'text-2xl sm:text-3xl',
+            'font-bold text-white',
+          )}>
+            {isLoading ? '- -' : value}
+          </p>
+          <p className={classNames(
+            'mx-1 text-white/70 font-bold',
+            'text-lg sm:text-xl',
+          )}>kW</p>
+        </FlexDiv>
       </FlexDiv>
-    </FlexDiv>
+    </Tooltip>
   );
 }
 
@@ -106,16 +109,18 @@ export function StatisticBlock() {
   } = useGetStatistics();
 
   return (
-    <FlexDiv
-      className={classNames(
-        'bg-fgcolor dark:bg-fgcolor-dark rounded-2xl px-4 py-4',
-        'flex-col gap-y-2 justify-start w-full',
-        isLoading ? 'opacity-50' : '')}>
-      <StatisticBlockItem type='light' title='Last Day' value={data?.light_total_last_day}/>
-      <StatisticBlockItem type='light' title='Last Week' value={data?.light_total_last_week}/>
-      <StatisticBlockItem type='ac' title='Last Day' value={data?.ac_total_last_day}/>
-      <StatisticBlockItem type='ac' title='Last Week' value={data?.ac_total_last_week}/>
-    </FlexDiv>
+    <Tooltip title='"Last Day" in this statistics actually refers to the statistics during last 24 hours.'>
+      <FlexDiv
+        className={classNames(
+          'bg-fgcolor dark:bg-fgcolor-dark rounded-2xl px-4 py-4',
+          'flex-col gap-y-2 justify-start w-full',
+          isLoading ? 'opacity-50' : '')}>
+        <StatisticBlockItem type='light' title='Last Day' value={data?.light_total_last_day}/>
+        <StatisticBlockItem type='light' title='Last Week' value={data?.light_total_last_week}/>
+        <StatisticBlockItem type='ac' title='Last Day' value={data?.ac_total_last_day}/>
+        <StatisticBlockItem type='ac' title='Last Week' value={data?.ac_total_last_week}/>
+      </FlexDiv>
+    </Tooltip>
   );
 }
 

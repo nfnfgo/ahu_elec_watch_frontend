@@ -1,5 +1,7 @@
 'use client';
 
+import {useEffect, useState} from "react";
+
 import {ConfigProvider, theme} from 'antd';
 
 import {FlexDiv} from '@/components/container';
@@ -23,7 +25,18 @@ interface AdaptiveBackgroundProps {
  */
 export function AdaptiveBackground(props: AdaptiveBackgroundProps) {
 
-  const isDarkMode: boolean = window.matchMedia("(prefers-color-scheme:dark)").matches;
+  const [curDarkMode, setCurDarkMode] = useState(false);
+
+  function getDarkMode() {
+    if (typeof window !== 'undefined') {
+      return window.matchMedia("(prefers-color-scheme:dark)").matches;
+    }
+    return false;
+  }
+
+  useEffect(() => {
+    setCurDarkMode(getDarkMode());
+  }, []);
 
   let {
     fullScreen,
@@ -39,11 +52,11 @@ export function AdaptiveBackground(props: AdaptiveBackgroundProps) {
       'dark:[color-scheme:dark]',
     )}>
       <ConfigProvider
-        theme={isDarkMode ? {
+        theme={(curDarkMode) ? {
           "token": {
-            "colorPrimary": "#0ea5e9",
-            "colorInfo": "#0ea5e9",
-            "colorBgBase": "#1e293b"
+            "colorPrimary": "#0a79aa",
+            "colorInfo": "#0a79aa",
+            "colorBgBase": "#0c0f18",
           },
           algorithm: theme.darkAlgorithm
         } : {

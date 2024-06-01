@@ -2,18 +2,20 @@
 
 import {useEffect, useState} from "react";
 import toast from 'react-hot-toast';
-import {Segmented} from 'antd';
+import {Segmented, Tooltip} from 'antd';
 
 import {classNames} from "@/tools/css_tools";
 
 import {FlexDiv, Container, Center} from '@/components/container';
 import {Header, HeaderTitle} from '@/components/header';
 import {BalanceInfoBlock, StatisticBlock,} from '@/cus_components/balance';
-import {RecordsLineChart} from '@/cus_components/records';
+import {RecordsLineChart, DailyUsageList} from '@/cus_components/records';
 
 import {useGetBalance} from '@/api/info';
 
 import * as comp from './components';
+import {Title} from '@/components/title';
+
 
 export function Client() {
 
@@ -56,7 +58,7 @@ export function Client() {
         expand
         className={classNames(
           'flex-col justify-start items-center',
-          'flex-auto overflow-y-auto rounded-2xl',
+          'flex-auto overflow-y-auto',
         )}>
 
         {/*Content Root Div*/}
@@ -70,7 +72,7 @@ export function Client() {
           <FlexDiv
             className={classNames(
               'w-full',
-              'max-h-[15rem]',
+              'max-h-[15rem] max-w-[50rem]',
               'flex-none',
               'flex-row gap-x-2 p-2',
               'sm:min-h-[10rem]',
@@ -91,11 +93,13 @@ export function Client() {
 
             {/*Statistic Part*/}
             <FlexDiv className={classNames(
-              'max-w-[30rem] w-full',
+              'w-full',
             )}>
               <StatisticBlock/>
             </FlexDiv>
           </FlexDiv>
+
+          <Title>{graphType == 'balance' ? 'Balance Trends' : 'Usage Trends'}</Title>
 
           {/*Balance Usage Graph Part*/}
           <FlexDiv
@@ -158,10 +162,20 @@ export function Client() {
             </FlexDiv>
           </FlexDiv>
 
+          <Title>Daily Usage</Title>
+
           <FlexDiv className={classNames(
-            'h-[100rem] bg-red flex-none'
+            'flex-col flex-none w-full p-2 items-center max-w-[50rem]',
           )}>
-            Test
+            <DailyUsageList days={14} recent_on_top={true}/>
+          </FlexDiv>
+
+          <FlexDiv
+            className={classNames(
+              'flex-none h-[100rem]'
+            )}
+          >
+            test
           </FlexDiv>
         </FlexDiv>
       </FlexDiv>
