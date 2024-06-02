@@ -1,7 +1,25 @@
+import toast from 'react-hot-toast';
+import {message} from "antd";
+
 export class BaseError extends Error {
+  name: string;
+
   constructor(name: string, message: string) {
     super(message);
-    self.name = name;
+    this.name = name;
+  }
+}
+
+export class ParamError extends BaseError {
+  constructor(message: string) {
+    super('param_error', message);
+  }
+}
+
+export class NetworkError extends BaseError {
+  constructor() {
+    super('network_error', 'Network error occurred, ' +
+      'please check your Internet connection.');
   }
 }
 
@@ -39,12 +57,20 @@ export function apiErrorThrower(e: any) {
     )
   }
 
+  // if it's axios network error
+  if (e.message == 'Network Error') {
+    throw new NetworkError()
+  }
+
   // If not axios error, throw unknown error
-  throw new BaseError('unknown_error', 'Unknown exceptions occurred in API request function.\n' + e);
+  throw new BaseError('unknown_error', 'Error occurred when requesting API: ' + e.message);
 }
 
-export class ParamError extends BaseError {
-  constructor(message: string) {
-    super('param_error', message);
+
+export function errorPopper(e: any) {
+  if (e.name !== undefined && e.message !== undefined) {
+    toast.error(`${e.message} (${e.name})`)
+  } else {
+    toast.error(e.message);
   }
 }

@@ -9,9 +9,9 @@ import {classNames} from "@/tools/css_tools";
 import {FlexDiv, Container, Center} from '@/components/container';
 import {Header, HeaderTitle} from '@/components/header';
 import {BalanceInfoBlock, StatisticBlock,} from '@/cus_components/balance';
-import {RecordsLineChart, DailyUsageList} from '@/cus_components/records';
+import {RecordsLineChart, PeriodUsageList} from '@/cus_components/records';
 
-import {useGetBalance} from '@/api/info';
+import {useGetBalance, PeriodUnit} from '@/api/info';
 
 import * as comp from './components';
 import {Title} from '@/components/title';
@@ -33,6 +33,12 @@ export function Client() {
   const [graphType, setGraphType]
     = useState<'balance' | 'usage'>('balance');
 
+  const [tableDataDuration, setTableDataDuration] =
+    useState<PeriodUnit>('day');
+
+  const [periodCount, setPeriodCount] =
+    useState<number>(7);
+
   return (
     <FlexDiv
       expand
@@ -43,7 +49,7 @@ export function Client() {
 
       {/*Header Part*/}
       <Header
-        link='/elec_watch_test'
+        link='/'
         content={(
           <comp.LastUpdateInfoTag
             timeStamp={balanceData?.timestamp}
@@ -115,6 +121,7 @@ export function Client() {
                 'rounded-2xl',
               )}>
 
+              {/*Graph Option Bar*/}
               <FlexDiv className={classNames(
                 'flex-none',
                 'flex-col justify-start items-center gap-y-2',
@@ -162,12 +169,56 @@ export function Client() {
             </FlexDiv>
           </FlexDiv>
 
-          <Title>Daily Usage</Title>
+          <Title>{tableDataDuration == 'day' && 'Daily'}
+            {tableDataDuration == 'week' && 'Weekly'}
+            {tableDataDuration == 'month' && 'Monthly'} Usage</Title>
 
+          {/*Period Usage Table Padding Flex*/}
           <FlexDiv className={classNames(
             'flex-col flex-none w-full p-2 items-center max-w-[50rem]',
           )}>
-            <DailyUsageList days={14} recent_on_top={true}/>
+            {/*Period Usage Table Root Flex*/}
+            <FlexDiv
+              className={classNames(
+                'flex-col flex-none w-full max-w-[50rem] rounded-2xl overflow-hidden',
+                'bg-fgcolor dark:bg-fgcolor-dark',
+              )}>
+
+              {/*Segment Control Bar*/}
+              <FlexDiv className={classNames(
+                'flex-row justify-between w-full p-2',
+              )}>
+                <Segmented
+                  value={tableDataDuration}
+                  size='large'
+                  options={[
+                    {
+                      label: 'Daily',
+                      value: 'day',
+                    },
+                    {
+                      label: 'Weekly',
+                      value: 'week'
+                    },
+                    {
+                      label: 'Monthly',
+                      value: 'month',
+                    },
+                  ]}
+                  onChange={setTableDataDuration}/>
+
+                <Segmented
+                  value={periodCount}
+                  size='large'
+                  options={[7, 14, 30]}
+                  onChange={setPeriodCount}/>
+              </FlexDiv>
+
+              <PeriodUsageList
+                period={tableDataDuration}
+                period_count={periodCount}
+                recent_on_top={true}/>
+            </FlexDiv>
           </FlexDiv>
 
           <FlexDiv

@@ -34,8 +34,6 @@ export function LastUpdateInfoTag(props: LastUpdateInfoTagProps) {
 
   let error = !isLoading && timeStamp == undefined;
 
-  let duartion = undefined;
-
 
   function getDurationString(): string {
     if (error) {

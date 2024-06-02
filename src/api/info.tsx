@@ -100,7 +100,7 @@ export function useGetRecentRecords(days: number, type: 'balance' | 'usage') {
  *
  * All field has the same meaning as the one that the API returns.
  */
-export interface DailyUsageInfoIn {
+export interface PeriodUsageInfoIn {
   start_time: number;
   end_time: number;
   light_usage: number;
@@ -110,7 +110,7 @@ export interface DailyUsageInfoIn {
 export async function getDailyUsage(
   days: number,
   recent_on_top: boolean = true,
-): Promise<DailyUsageInfoIn[]> {
+): Promise<PeriodUsageInfoIn[]> {
   if (days < 1) {
     throw new ParamError('You must at least get daily usage info list starting from 1 day back.');
   }
@@ -133,5 +133,47 @@ export function useGetDailyUsage(days: number, recent_on_top?: boolean) {
   return useSWR(
     ['/info/daily_usage', days, recent_on_top],
     (keys) => (getDailyUsage(keys[1], keys[2])),
+  );
+}
+
+export type PeriodUnit = 'day' | 'week' | 'month';
+
+export async function getPeriodUsage(
+  period: PeriodUnit,
+  period_count: number,
+  recent_on_top: boolean = true,
+): Promise<PeriodUsageInfoIn[]> {
+  if (period_count < 1) {
+    throw new ParamError('The number of periods must greater than zero');
+  }
+
+  let data = undefined;
+  try {
+    let res = await axiosIns.get(
+      '/info/period_usage',
+      {
+        params: {
+          period,
+          period_count,
+          recent_on_top: recent_on_top
+        }
+      })
+    ;
+    data = res.data;
+  } catch (e) {
+    apiErrorThrower(e);
+  }
+
+  return data;
+}
+
+export function useGetPeriodUsage(
+  period: PeriodUnit,
+  period_count: number,
+  recent_on_top: boolean = true,
+) {
+  return useSWR(
+    ['/info/period_usage', period, period_count, recent_on_top],
+    (keys) => (getPeriodUsage(keys[1], keys[2], keys[3])),
   );
 }

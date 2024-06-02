@@ -19,8 +19,10 @@ import {FlexDiv, Container, Center} from '@/components/container';
 import {setDefault} from "@/tools/set_default";
 import {
   StatisticIn, useGetRecentRecords,
-  DailyUsageInfoIn, useGetDailyUsage,
+  PeriodUsageInfoIn, useGetPeriodUsage,
+  PeriodUnit,
 } from '@/api/info';
+import {errorPopper} from '@/exceptions/error';
 
 
 interface RecordsLineChartProps {
@@ -41,12 +43,16 @@ export function RecordsLineChart(props: RecordsLineChartProps) {
     error,
   } = useGetRecentRecords(props.days, props.graphType ?? 'balance');
 
+  if (error) {
+    errorPopper(error);
+  }
+
   let canvasRef = useRef();
 
   return (
     <FlexDiv
       className={classNames(
-        'flex-none w-full h-[35rem]',
+        'flex-none w-full',
       )}>
       <Line
         className={classNames(
@@ -56,7 +62,7 @@ export function RecordsLineChart(props: RecordsLineChartProps) {
         ref={canvasRef}
         options={{
           responsive: true,
-          maintainAspectRatio: false,
+          maintainAspectRatio: true,
           backgroundColor: 'transparent',
           scales: {
             x: {
@@ -95,24 +101,32 @@ export function RecordsLineChart(props: RecordsLineChartProps) {
   );
 }
 
-interface DailyUsageListProps {
+interface PeriodUsageProps {
   /**
-   * The number of days we want to get info.
+   * The period unit of the info.
    */
-  days: number;
+  period: PeriodUnit;
   /**
-   * If `true`, latest info will at the begining.
+   * Number of periods shows in the table.
+   */
+  period_count: number;
+  /**
+   * If `true`, the latest info will at the beginning.
    */
   recent_on_top: boolean;
 }
 
-export function DailyUsageList(props: DailyUsageListProps) {
+export function PeriodUsageList(props: PeriodUsageProps) {
 
   const {
     data,
     isLoading,
     error,
-  } = useGetDailyUsage(props.days, props.recent_on_top);
+  } = useGetPeriodUsage(props.period, props.period_count, props.recent_on_top);
+
+  if (error) {
+    errorPopper(error);
+  }
 
   /**
    * Function that passed to antd Table component as a column data renderer for usage info.
@@ -143,17 +157,17 @@ export function DailyUsageList(props: DailyUsageListProps) {
     </p>);
   }
 
-  if (error) {
-    toast.error(error.message);
-  }
 
   return (
     <FlexDiv
       className={classNames(
-        'flex-none flex-col',
+        'flex-none flex-col w-full',
       )}
     >
       <Table
+        // style={{
+        //   width: '100%'
+        // }}
         sticky={true}
         loading={isLoading}
         pagination={false}
@@ -166,7 +180,8 @@ export function DailyUsageList(props: DailyUsageListProps) {
         <ColumnGroup title='Usage'>
           <Column title='Illumination' dataIndex='light_usage' key='light_usage'
                   render={usageColumnRendererGen('light')}/>
-          <Column title='Air Conditioner' dataIndex='ac_usage' key='ac_usage' render={usageColumnRendererGen('ac')}/>
+          <Column title='Air Conditioner' dataIndex='ac_usage' key='ac_usage'
+                  render={usageColumnRendererGen('ac')}/>
         </ColumnGroup>
       </Table>
     </FlexDiv>

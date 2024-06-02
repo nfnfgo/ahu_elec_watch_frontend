@@ -32,7 +32,7 @@ export function Header(props: HeaderProps) {
     // Responsive Margin
     <FlexDiv
       className={classNames(
-        'w-full p-0 md:p-2',
+        'w-full p-0 md:p-2 z-10',
         'flex-none',
         'transition-all')}>
 
