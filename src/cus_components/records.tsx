@@ -11,7 +11,7 @@ import toast from 'react-hot-toast';
 
 Chart.register();
 
-import {Table} from 'antd';
+import {Table, Tooltip} from 'antd';
 
 const {Column, ColumnGroup} = Table;
 
@@ -132,11 +132,23 @@ export function PeriodUsageList(props: PeriodUsageProps) {
    * Function that passed to antd Table component as a column data renderer for usage info.
    */
   function usageColumnRendererInner(usage: number, infoType: 'light' | 'ac' = 'light') {
-    return (<p className={classNames(
-      'font-mono',
-      infoType == 'light' ? 'text-blue dark:text-blue-light' : '',
-      infoType == 'ac' ? 'text-green dark:text-green-light' : '',
-    )}>{usage.toFixed(2)}</p>);
+    let days = 1;
+    if (props.period == 'week') {
+      days = 7;
+    }
+    if (props.period == 'month') {
+      days = 30;
+    }
+
+    return (<Tooltip
+      title={`${(usage / days).toFixed(2)} kW/day`}
+      placement='leftBottom'>
+      <p className={classNames(
+        'font-mono',
+        infoType == 'light' ? 'text-blue dark:text-blue-light' : '',
+        infoType == 'ac' ? 'text-green dark:text-green-light' : '',
+      )}>{usage.toFixed(2)}</p>
+    </Tooltip>);
   }
 
   function usageColumnRendererGen(infoType: 'light' | 'ac' = 'light') {
