@@ -19,7 +19,7 @@ export class ParamError extends BaseError {
 export class NetworkError extends BaseError {
   constructor() {
     super('network_error', 'Network error occurred, ' +
-      'please check your Internet connection.');
+      'please check your Internet connection or maybe there is error occurred at server side.');
   }
 }
 
@@ -29,6 +29,8 @@ export class NetworkError extends BaseError {
  */
 export function apiErrorThrower(e: any) {
   // if it's an Axios Error, and server response with status code out of 2xx range.
+  console.debug('Into apiErrorThrower');
+  console.debug(e);
   if (e.response) {
 
     // if backend doesn't give any further info

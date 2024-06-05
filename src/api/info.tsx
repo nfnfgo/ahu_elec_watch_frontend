@@ -76,10 +76,9 @@ export async function getRecentRecords(
 
   let data = undefined;
   try {
-    let res = await axiosIns.get(
+    let res = await axiosIns.post(
       '/info/recent_records',
-      {params: {days, info_type: type}})
-    ;
+      {days});
     data = res.data;
   } catch (e) {
     apiErrorThrower(e);

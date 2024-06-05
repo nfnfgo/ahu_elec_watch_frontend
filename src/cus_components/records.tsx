@@ -52,8 +52,22 @@ export function RecordsLineChart(props: RecordsLineChartProps) {
   return (
     <FlexDiv
       className={classNames(
-        'flex-none w-full',
+        'relative flex-none w-full',
       )}>
+      {(recordData?.length ?? 0) < 1 && <FlexDiv className={classNames(
+        'absolute w-full h-full'
+      )}>
+          {/*No Data Dialog Part*/}
+          <Center><FlexDiv className={classNames(
+            'backdrop-blur-[4px] bg-grey/10',
+            'shadow-black/10 shadow-md',
+            'p-2 rounded-md',
+            'flex-col justify-start items-center',
+          )}>
+              <p>No record found for this period.</p>
+              <p>Try using a larger time range and check again.</p>
+          </FlexDiv></Center>
+      </FlexDiv>}
       <Line
         className={classNames(
           'flex flex-auto h-full w-full bg-fgcolor dark:bg-fgcolor-dark p-4',
@@ -145,8 +159,8 @@ export function PeriodUsageList(props: PeriodUsageProps) {
       placement='leftBottom'>
       <p className={classNames(
         'font-mono',
-        infoType == 'light' ? 'text-blue dark:text-blue-light' : '',
-        infoType == 'ac' ? 'text-green dark:text-green-light' : '',
+        infoType == 'ac' ? 'text-blue dark:text-blue-light' : '',
+        infoType == 'light' ? 'text-green dark:text-green-light' : '',
       )}>{usage.toFixed(2)}</p>
     </Tooltip>);
   }

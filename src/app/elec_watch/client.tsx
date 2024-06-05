@@ -3,8 +3,10 @@
 import {useEffect, useState} from "react";
 import toast from 'react-hot-toast';
 import {Segmented, Tooltip} from 'antd';
+import Link from 'next/link';
 
 import {classNames} from "@/tools/css_tools";
+import {backendBaseUrl} from '@/config/general';
 
 import {FlexDiv, Container, Center} from '@/components/container';
 import {Header, HeaderTitle} from '@/components/header';
@@ -221,12 +223,13 @@ export function Client() {
             </FlexDiv>
           </FlexDiv>
 
-          <FlexDiv
-            className={classNames(
-              'flex-none h-[100rem]'
-            )}
-          >
-            test
+          <FlexDiv className={classNames(
+            'p-2',
+            'flex-none flex-col sm:flex-row gap-2 sm:gap-4',
+            'justify-center items-center'
+          )}>
+            <Link target='_blank' href={`${backendBaseUrl}/docs`}>Backend Interactive API Docs</Link>
+            <Link target='_blank' href='https://github.com/NFSandbox/ahu_elec_watch_frontend'>Github Frontend Repo</Link>
           </FlexDiv>
         </FlexDiv>
       </FlexDiv>
