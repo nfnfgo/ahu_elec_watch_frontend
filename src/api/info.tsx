@@ -3,6 +3,8 @@ import useSWR from "swr";
 import {axiosIns} from './axios';
 import {apiErrorThrower, BaseError, ParamError} from '@/exceptions/error';
 
+import {useSettingsStore} from '@/states/settings';
+
 export interface BalanceRecordIn {
   timestamp: number;
   ac_balance: number;
@@ -75,10 +77,22 @@ export async function getRecentRecords(
   }
 
   let data = undefined;
+  const currentSettings = useSettingsStore.getState().settings;
+
   try {
     let res = await axiosIns.post(
       '/info/recent_records',
-      {days});
+      type == 'balance' ?
+        {days} :
+        {
+          days,
+          usage_convert_config: {
+            spreading: currentSettings.usageSpreading,
+            smoothing: currentSettings.usageSmoothing,
+            per_hour_usage: currentSettings.usagePreHourUnit,
+            use_smart_merge: currentSettings.usageSmartMerge,
+          },
+        });
     data = res.data;
   } catch (e) {
     apiErrorThrower(e);

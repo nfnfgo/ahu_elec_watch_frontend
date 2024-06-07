@@ -2,7 +2,7 @@
 
 import {useEffect, useState} from "react";
 import toast from 'react-hot-toast';
-import {Segmented, Tooltip} from 'antd';
+import {Segmented, Tooltip, Button} from 'antd';
 import Link from 'next/link';
 
 import {classNames} from "@/tools/css_tools";
@@ -17,9 +17,21 @@ import {useGetBalance, PeriodUnit} from '@/api/info';
 
 import * as comp from './components';
 import {Title} from '@/components/title';
+import {
+  ChartItemCountSegmented,
+  ChartTimeRangeSegmented,
+  DataTypeSegmented,
+  DiagramDaysRangeSegmented
+} from '@/cus_components/selections';
+import {useSettingsStore} from '@/states/settings';
 
 
 export function Client() {
+
+  const defaultDiagDays = useSettingsStore(state => state.settings.diagramDays);
+  const defaultDiagType = useSettingsStore(state => state.settings.diagramType);
+  const defaultChartTimeRange = useSettingsStore(state => state.settings.chartTimeRange);
+  const defaultChartItemCount = useSettingsStore(state => state.settings.chartItemsCount);
 
   const {
     data: balanceData,
@@ -30,16 +42,16 @@ export function Client() {
   // Store graph days duration states
   const [
     graphShowDays,
-    setGraphShowDays] = useState<number>(3);
+    setGraphShowDays] = useState<number | undefined>(undefined);
 
   const [graphType, setGraphType]
-    = useState<'balance' | 'usage'>('balance');
+    = useState<'balance' | 'usage' | undefined>(undefined);
 
   const [tableDataDuration, setTableDataDuration] =
-    useState<PeriodUnit>('day');
+    useState<PeriodUnit | undefined>(undefined);
 
   const [periodCount, setPeriodCount] =
-    useState<number>(7);
+    useState<number | undefined>(undefined);
 
   return (
     <FlexDiv
@@ -130,44 +142,20 @@ export function Client() {
                 'sm:flex-row sm:justify-between sm:items-center',
               )}>
                 {/*Switch the time duration range of the graph*/}
-                <Segmented
-                  value={graphShowDays}
+                <DiagramDaysRangeSegmented
                   size='large'
-                  options={[
-                    {
-                      label: '24 Hours',
-                      value: 1,
-                    },
-                    {
-                      label: '3 Days',
-                      value: 3
-                    },
-                    {
-                      label: 'Weekly',
-                      value: 7,
-                    },
-                    {
-                      label: 'Monthly',
-                      value: 30,
-                    },
-                  ]}
-                  onChange={setGraphShowDays}/>
+                  value={graphShowDays ?? defaultDiagDays}
+                  onChange={setGraphShowDays}
+                />
 
-                <Segmented
-                  value={graphType}
+                <DataTypeSegmented
                   size='large'
-                  options={[{
-                    label: 'Balance',
-                    value: 'balance',
-                  },
-                    {
-                      label: 'Usage',
-                      value: 'usage',
-                    },]}
-                  onChange={setGraphType}/>
+                  value={graphType ?? defaultDiagType}
+                  onChange={setGraphType}
+                />
               </FlexDiv>
 
-              <RecordsLineChart days={graphShowDays} graphType={graphType}/>
+              <RecordsLineChart days={graphShowDays ?? defaultDiagDays} graphType={graphType ?? defaultDiagType}/>
             </FlexDiv>
           </FlexDiv>
 
@@ -190,46 +178,38 @@ export function Client() {
               <FlexDiv className={classNames(
                 'flex-row justify-between w-full p-2',
               )}>
-                <Segmented
-                  value={tableDataDuration}
+                <ChartTimeRangeSegmented
                   size='large'
-                  options={[
-                    {
-                      label: 'Daily',
-                      value: 'day',
-                    },
-                    {
-                      label: 'Weekly',
-                      value: 'week'
-                    },
-                    {
-                      label: 'Monthly',
-                      value: 'month',
-                    },
-                  ]}
+                  value={tableDataDuration ?? defaultChartTimeRange}
                   onChange={setTableDataDuration}/>
 
-                <Segmented
-                  value={periodCount}
-                  size='large'
-                  options={[7, 14, 30]}
-                  onChange={setPeriodCount}/>
+                <ChartItemCountSegmented size={'large'} value={periodCount ?? defaultChartItemCount}
+                                         onChange={setPeriodCount}/>
               </FlexDiv>
 
               <PeriodUsageList
-                period={tableDataDuration}
-                period_count={periodCount}
+                period={tableDataDuration ?? defaultChartTimeRange}
+                period_count={periodCount ?? defaultChartItemCount}
                 recent_on_top={true}/>
             </FlexDiv>
           </FlexDiv>
 
+          {/*Action Button Part*/}
+          <FlexDiv className={classNames(
+            'flex-col flex-none w-full p-2 items-center max-w-[50rem]',
+          )}>
+            <Button className='w-full' href='/settings'>Settings</Button>
+          </FlexDiv>
+
+          {/*Footer Part*/}
           <FlexDiv className={classNames(
             'p-2',
             'flex-none flex-col sm:flex-row gap-2 sm:gap-4',
             'justify-center items-center'
           )}>
             <Link target='_blank' href={`${backendBaseUrl}/docs`}>Backend Interactive API Docs</Link>
-            <Link target='_blank' href='https://github.com/NFSandbox/ahu_elec_watch_frontend'>Github Frontend Repo</Link>
+            <Link target='_blank' href='https://github.com/NFSandbox/ahu_elec_watch_frontend'>Github Frontend
+              Repo</Link>
           </FlexDiv>
         </FlexDiv>
       </FlexDiv>
