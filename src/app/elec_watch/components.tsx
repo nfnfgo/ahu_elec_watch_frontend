@@ -68,6 +68,7 @@ export function LastUpdateInfoTag(props: LastUpdateInfoTagProps) {
         error ? 'bg-red/20 dark:bg-red-light/20' : '',
         isLoading ? 'bg-grey/20' : '',
         (!isLoading && !error) ? 'bg-blue/20 text-blue dark:text-blue-light' : '',
+        'justify-center items-center',
       )}>
         <p>
           Last Update: <span className='whitespace-nowrap'>{getDurationString()}</span>

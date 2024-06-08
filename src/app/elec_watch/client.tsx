@@ -97,6 +97,7 @@ export function Client() {
               'flex-row gap-x-2 p-2',
               'sm:min-h-[10rem]',
               'justify-center',
+              'text-base',
             )}>
             {/*Balance Monitor Block*/}
             <FlexDiv

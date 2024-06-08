@@ -2,16 +2,20 @@
 
 import React, {ReactNode, useEffect, useState} from "react";
 import toast from 'react-hot-toast';
-import {Form, Segmented, Tooltip, Input, Button, SegmentedProps, Switch, Flex, Skeleton} from 'antd';
+import {Form, Segmented, Tooltip, Input, Button, SegmentedProps, Switch, Flex, Skeleton, Space} from 'antd';
 import Link from 'next/link';
 
 import {classNames} from "@/tools/css_tools";
 import {backendBaseUrl} from '@/config/general';
 
 import {FlexDiv, Container, Center} from '@/components/container';
+import {ErrorCard} from '@/components/error';
+import {NoticeText} from '@/components/texts';
 import {Header, HeaderTitle} from '@/components/header';
 import {BalanceInfoBlock, StatisticBlock,} from '@/cus_components/balance';
 import {RecordsLineChart, PeriodUsageList} from '@/cus_components/records';
+
+import {useHeaderInfo, setAhuCredentialFromURL} from '@/api/ahu';
 
 
 import {
@@ -131,5 +135,131 @@ function AccountLoginBlock() {
  * @constructor
  */
 export function AHULoginCredentialSettingsBlock() {
-  ;
+  const {
+    data,
+    isLoading,
+    error,
+  } = useGetMe();
+
+  if (isLoading) {
+    return (
+      <FlexDiv className={classNames(
+        'w-full min-h-[10rem]',
+        'bg-fgcolor dark:bg-fgcolor-dark rounded-xl p-2',
+      )}>
+        <Skeleton/>
+      </FlexDiv>
+    );
+  }
+
+  if (error) {
+    return (
+      <FlexDiv className={classNames(
+        'w-full min-h-[10rem]',
+        'bg-fgcolor dark:bg-fgcolor-dark rounded-xl',
+      )}>
+        <ErrorCard title='Role Info Error' description='Could not retrieve current role from API server'/>
+      </FlexDiv>
+    );
+  }
+
+  if (data !== 'admin') {
+    return (
+      <FlexDiv className={classNames(
+        'w-full min-h-[10rem]',
+        'bg-fgcolor dark:bg-fgcolor-dark rounded-xl',
+      )}>
+        <ErrorCard title='Permission Required'
+                   description='Current role is not allowed to access/edit this settings info'/>
+      </FlexDiv>
+    );
+  }
+
+  return (
+    <FlexDiv className={classNames(
+      'w-full',
+      'bg-fgcolor dark:bg-fgcolor-dark rounded-xl p-2',
+      'flex-col gap-y-2',
+    )}>
+      <CredentialManagePart/>
+    </FlexDiv>
+  );
+}
+
+export function CredentialManagePart() {
+
+  const {
+    data,
+    isLoading,
+    error,
+  } = useHeaderInfo();
+
+  const [infoUrl, setInfoUrl] = useState('');
+
+  async function copyAuth() {
+    if (typeof window !== 'undefined') {
+      await navigator.clipboard.writeText(data?.authorization ?? '');
+      toast.success('Header "Authorization" copied');
+    }
+  }
+
+  async function copySynjones() {
+    if (typeof window !== 'undefined') {
+      await navigator.clipboard.writeText(data?.synjones_auth ?? '');
+      toast.success('Header "Synjones_Auth" copied');
+    }
+  }
+
+  async function handleSetHeader() {
+    try {
+      await toast.promise(
+        setAhuCredentialFromURL(infoUrl).catch((e) => {
+          throw e;
+        }),
+        {
+          loading: 'Updating Synjones_Auth info...',
+          error: 'Update failed',
+          success: 'Synjones_Auth updated',
+        }
+      );
+    } catch (e) {
+      errorPopper(e);
+    }
+  }
+
+  return (
+    <>
+      {/*Authorization Header Info*/}
+      <Space.Compact>
+        <Tooltip title='AHU "Authorization" header value'>
+          <Input addonBefore='Authorization' readOnly value={data?.authorization}/>
+        </Tooltip>
+        <Button onClick={copyAuth}>Copy</Button>
+      </Space.Compact>
+
+      {/*Syn Header Info*/}
+      <Space.Compact>
+        <Tooltip title='AHU "Synjones_Auth" header value'>
+          <Input addonBefore='Synjones_Auth' readOnly value={data?.synjones_auth}/>
+        </Tooltip>
+        <Button onClick={copySynjones}>Copy</Button>
+      </Space.Compact>
+
+      {/*Update Header From URL Part*/}
+      <FlexDiv className={classNames(
+        'flex-col gap-y-2 w-full',
+      )}>
+        <Input className='w-full' placeholder='Copy AHU Electric Balance Topup Platform URL here'
+               value={infoUrl}
+               onChange={function (e) {
+                 setInfoUrl(e.target.value);
+               }}/>
+        <Button type='primary' className='w-full' onClick={handleSetHeader}>Update Synjones_Auth</Button>
+      </FlexDiv>
+
+      {/*Notice Part*/}
+      <NoticeText hasColor={false}>Notice: AHU Header Authorization configuration is stored in backend
+        and will not be persisted as frontend settings in the browser.</NoticeText>
+    </>
+  );
 }

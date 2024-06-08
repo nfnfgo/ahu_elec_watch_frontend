@@ -129,6 +129,7 @@ export function Client() {
           'flex-col flex-none gap-y-2 max-w-[50rem] w-full p-2 items-center',
         )}>
           <Title>AHU Credential Configuration</Title>
+          <comp.AHULoginCredentialSettingsBlock/>
         </FlexDiv>
 
         {/*Backup Import/Export Reset All Settings Part*/}

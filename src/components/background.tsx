@@ -61,6 +61,7 @@ export function AdaptiveBackground(props: AdaptiveBackgroundProps) {
       'bg-bgcolor dark:bg-bgcolor-dark',
       'flex-col justify-start items-center',
       'dark:[color-scheme:dark]',
+      'text-sm',
     )}>
       <ConfigProvider
         theme={(curDarkMode) ? {
