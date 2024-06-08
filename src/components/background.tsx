@@ -27,6 +27,13 @@ export function AdaptiveBackground(props: AdaptiveBackgroundProps) {
 
   const [curDarkMode, setCurDarkMode] = useState(false);
 
+  function colorSchemaChangeHandler(e: Event) {
+    setCurDarkMode((e as any).matches);
+  }
+
+  /**
+   * Serverside-safe get dark mode.
+   */
   function getDarkMode() {
     if (typeof window !== 'undefined') {
       return window.matchMedia("(prefers-color-scheme:dark)").matches;
@@ -36,6 +43,10 @@ export function AdaptiveBackground(props: AdaptiveBackgroundProps) {
 
   useEffect(() => {
     setCurDarkMode(getDarkMode());
+    if (typeof window !== 'undefined') {
+      window.matchMedia("(prefers-color-scheme:dark)").addEventListener('change', colorSchemaChangeHandler);
+      return window.matchMedia("(prefers-color-scheme:dark)").removeEventListener('change', colorSchemaChangeHandler);
+    }
   }, []);
 
   let {

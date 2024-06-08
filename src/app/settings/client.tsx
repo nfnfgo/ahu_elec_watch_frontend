@@ -6,14 +6,11 @@ import {Segmented, Tooltip, Input, Button, SegmentedProps, Switch} from 'antd';
 import Link from 'next/link';
 
 import {classNames} from "@/tools/css_tools";
-import {backendBaseUrl} from '@/config/general';
 
 import {FlexDiv, Container, Center} from '@/components/container';
 import {Header, HeaderTitle} from '@/components/header';
-import {BalanceInfoBlock, StatisticBlock,} from '@/cus_components/balance';
-import {RecordsLineChart, PeriodUsageList} from '@/cus_components/records';
+import * as comp from './components';
 
-import {useGetBalance, PeriodUnit} from '@/api/info';
 
 import {Title} from '@/components/title';
 
@@ -58,11 +55,20 @@ export function Client() {
           'flex-col justify-start items-center',
           'overflow-y-auto',
         )}>
+
+        {/*Account Login / Info Part*/}
+        <FlexDiv className={classNames(
+          'flex-col flex-none gap-y-2 max-w-[50rem] w-full p-2 items-center'
+        )}>
+          <Title>Account / Roles</Title>
+          <comp.AccountInfoBlock/>
+        </FlexDiv>
+
         {/*Data Showing Part*/}
         <FlexDiv className={classNames(
           'flex-col flex-none gap-y-2 max-w-[50rem] w-full p-2 items-center'
         )}>
-          <Title>Date Showing</Title>
+          <Title>Data Showing</Title>
 
           {/*Diagram Days Default*/}
           <SettingsTile title={'Default Line Chart Days Range'}>
@@ -119,6 +125,12 @@ export function Client() {
           </SettingsTile>
         </FlexDiv>
 
+        <FlexDiv className={classNames(
+          'flex-col flex-none gap-y-2 max-w-[50rem] w-full p-2 items-center',
+        )}>
+          <Title>AHU Credential Configuration</Title>
+        </FlexDiv>
+
         {/*Backup Import/Export Reset All Settings Part*/}
         <FlexDiv className={classNames(
           'flex-col flex-none gap-y-2 max-w-[50rem] w-full p-2 items-center'
@@ -129,10 +141,7 @@ export function Client() {
           <Button className='w-full' danger onClick={resetSettings}>Reset All Settings</Button>
         </FlexDiv>
 
-        {/*Settings Json Data Part*/}
-        <Title>Settings JSON</Title>
-        <pre className='whitespace-pre-wrap'>{JSON.stringify(settings, undefined, '  ')}</pre>
-        <Button>Copy Settings in JSON</Button>
+
       </FlexDiv>
     </FlexDiv>
   );
