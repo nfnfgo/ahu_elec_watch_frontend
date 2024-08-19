@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "archive_out": "cd ./out && zip release.zip -r ./",
+    "release": "next build && npm run archive_out",
     "start": "next start",
     "lint": "next lint"
   },
