@@ -191,3 +191,51 @@ export function useGetPeriodUsage(
   );
 }
 
+
+/**
+ * Get records list based on a limitation of time range.
+ *
+ * Params:
+ *
+ * All param has the same name and meaning as in the Backend Endpoint API. For more info, check out backend docs.
+ */
+export async function getRecordsByTimeRange(start_time: number, end_time: number, info_type: 'balance' | 'usage'): Promise<BalanceRecordIn[]> {
+  if (start_time > end_time) {
+    throw new ParamError('Start time must before end time when requesting records by time range.');
+  }
+  let data = undefined;
+
+  const currentSettings = useSettingsStore.getState().settings;
+
+  try {
+    let res = await axiosIns.post(
+      '/info/get_records_by_time_range',
+      {
+        usage_convert_config: info_type == 'balance' ? undefined : {
+          spreading: currentSettings.usageSpreading,
+          smoothing: currentSettings.usageSmoothing,
+          per_hour_usage: currentSettings.usagePreHourUnit,
+          use_smart_merge: currentSettings.usageSmartMerge,
+        },
+      },
+      {
+        params: {
+          start_time,
+          end_time,
+        }
+      },)
+    ;
+    data = res.data;
+  } catch (e) {
+    apiErrorThrower(e);
+  }
+
+  return data;
+}
+
+export function useGetRecordByTimeRange(start_time: number, end_time: number, info_type: 'balance' | 'usage') {
+  return useSWR(
+    ['/info/get_records_by_time_range', start_time, end_time, info_type],
+    (keys) => (getRecordsByTimeRange(keys[1], keys[2], keys[3])),
+  );
+}

@@ -20,6 +20,7 @@ interface ErrorCardProps {
   title: string;
   description?: string;
   hasColor?: boolean;
+  className?: string;
 }
 
 export function ErrorCard(props: ErrorCardProps) {
@@ -31,10 +32,12 @@ export function ErrorCard(props: ErrorCardProps) {
         'flex-col justify-center items-center p-2',
         'gap-y-2',
         hasColor ? 'bg-fgcolor dark:bg-fgcolor-dark rounded-xl' : '',
+        props.className ?? '',
       )}>
         {/*Error Title Part*/}
         <p className={classNames(
-          'font-bold text-black/70 dark:text-white/70'
+          'font-bold text-black/70 dark:text-white/90',
+          'bg-black/10 dark:bg-white/10 px-2 py-1 rounded-md',
         )}>{props.title}</p>
 
         {/*Error Description Part (If have description)*/}
@@ -43,6 +46,16 @@ export function ErrorCard(props: ErrorCardProps) {
               'text-black/50 dark:text-white/50'
             )}>{props.description}</p>}
       </FlexDiv>
+    </Center>
+  );
+}
+
+export function LoadingSkeleton() {
+  return (
+    <Center className={classNames(
+      'p-2',
+    )}>
+      <Skeleton active/>
     </Center>
   );
 }

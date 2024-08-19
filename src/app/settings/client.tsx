@@ -2,7 +2,7 @@
 
 import React, {ReactNode, useEffect, useState} from "react";
 import toast from 'react-hot-toast';
-import {Segmented, Tooltip, Input, Button, SegmentedProps, Switch} from 'antd';
+import {Segmented, Tooltip, Input, Button, SegmentedProps, Switch, Flex} from 'antd';
 import Link from 'next/link';
 
 import {classNames} from "@/tools/css_tools";
@@ -137,10 +137,19 @@ export function Client() {
           'flex-col flex-none gap-y-2 max-w-[50rem] w-full p-2 items-center'
         )}>
           <Title>Import/Export & Reset All</Title>
-          <Button className='w-full' type='primary' onClick={exportToClipboard}>Copy Settings JSON to Clipboard</Button>
-          <Button className='w-full' onClick={importFromClipboard}>Import Settings From Clipboard</Button>
-          <Button className='w-full' danger onClick={resetSettings}>Reset All Settings</Button>
+
+          <FlexDiv className={classNames(
+            'flex-col gap-y-2 p-2 w-full',
+            'bg-fgcolor dark:bg-fgcolor-dark rounded-xl',
+          )}>
+            <Button className='w-full' type='primary' onClick={exportToClipboard}>Copy Settings JSON to Clipboard</Button>
+            <Button className='w-full' onClick={importFromClipboard}>Import Settings From Clipboard</Button>
+            <Button className='w-full' danger onClick={resetSettings}>Reset All Settings</Button>
+          </FlexDiv>
         </FlexDiv>
+
+        {/*Bottom Empty Space*/}
+        <FlexDiv className='min-h-[5rem]'></FlexDiv>
 
 
       </FlexDiv>

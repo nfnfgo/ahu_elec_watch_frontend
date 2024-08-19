@@ -199,7 +199,9 @@ export function Client() {
           <FlexDiv className={classNames(
             'flex-col flex-none w-full p-2 items-center max-w-[50rem]',
           )}>
-            <Button className='w-full' href='/settings'>Settings</Button>
+            <Link className='w-full' href='/settings'>
+              <Button className='w-full'>Settings</Button>
+            </Link>
           </FlexDiv>
 
           {/*Footer Part*/}
@@ -211,6 +213,7 @@ export function Client() {
             <Link target='_blank' href={`${backendBaseUrl}/docs`}>Backend Interactive API Docs</Link>
             <Link target='_blank' href='https://github.com/NFSandbox/ahu_elec_watch_frontend'>Github Frontend
               Repo</Link>
+            <Link target='_blank' href='https://github.com/orgs/NFSandbox/projects/1'>Github Project</Link>
           </FlexDiv>
         </FlexDiv>
       </FlexDiv>

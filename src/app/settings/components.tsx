@@ -11,32 +11,11 @@ import {backendBaseUrl} from '@/config/general';
 import {FlexDiv, Container, Center} from '@/components/container';
 import {ErrorCard} from '@/components/error';
 import {NoticeText} from '@/components/texts';
-import {Header, HeaderTitle} from '@/components/header';
-import {BalanceInfoBlock, StatisticBlock,} from '@/cus_components/balance';
-import {RecordsLineChart, PeriodUsageList} from '@/cus_components/records';
 
 import {useHeaderInfo, setAhuCredentialFromURL} from '@/api/ahu';
 
+import {login, logout, useGetMe} from '@/api/auth';
 
-import {
-  login,
-  logout,
-  useGetMe,
-} from '@/api/auth';
-
-import {Title} from '@/components/title';
-
-import {
-  useSettingsStore,
-  Settings,
-} from '@/states/settings';
-
-import {
-  ChartItemCountSegmented,
-  ChartTimeRangeSegmented,
-  DataTypeSegmented,
-  DiagramDaysRangeSegmented
-} from "@/cus_components/selections";
 import {errorPopper} from "@/exceptions/error";
 
 /**
@@ -55,7 +34,7 @@ export function AccountInfoBlock() {
       'bg-fgcolor dark:bg-fgcolor-dark rounded-xl',
     )}>
       {isLoading && <>
-          <Skeleton/>
+          <Skeleton active/>
       </>}
       {(data === undefined && !isLoading) && <AccountLoginBlock/>}
       {data !== undefined && (
@@ -147,7 +126,7 @@ export function AHULoginCredentialSettingsBlock() {
         'w-full min-h-[10rem]',
         'bg-fgcolor dark:bg-fgcolor-dark rounded-xl p-2',
       )}>
-        <Skeleton/>
+        <Skeleton active/>
       </FlexDiv>
     );
   }
@@ -211,6 +190,10 @@ export function CredentialManagePart() {
   }
 
   async function handleSetHeader() {
+    if (infoUrl == undefined || infoUrl.length == 0) {
+      toast.error('Enter a valid URL to update credential')
+      return;
+    }
     try {
       await toast.promise(
         setAhuCredentialFromURL(infoUrl).catch((e) => {
@@ -249,11 +232,19 @@ export function CredentialManagePart() {
       <FlexDiv className={classNames(
         'flex-col gap-y-2 w-full',
       )}>
-        <Input className='w-full' placeholder='Copy AHU Electric Balance Topup Platform URL here'
-               value={infoUrl}
-               onChange={function (e) {
-                 setInfoUrl(e.target.value);
-               }}/>
+        <Input
+          className='w-full'
+          placeholder='Copy AHU Electric Balance Topup Platform URL here'
+          value={infoUrl}
+          onChange={function (e) {
+            setInfoUrl(e.target.value);
+          }}
+          onKeyUp={function (e) {
+            if (e.key == 'Enter') {
+              handleSetHeader();
+            }
+          }
+          }/>
         <Button type='primary' className='w-full' onClick={handleSetHeader}>Update Synjones_Auth</Button>
       </FlexDiv>
 

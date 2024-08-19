@@ -45,6 +45,8 @@ export async function logout() {
     // if successfully logged out, revalidate me info API.
     await mutate('/auth/me');
   } catch (e) {
+    // even if error caught, still need to revalidate me info API.
+    await mutate('/auth/me');
     apiErrorThrower(e);
   }
 
