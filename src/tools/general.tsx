@@ -4,7 +4,7 @@ import * as dayjs from 'dayjs';
  * Get the key of an object by its value
  */
 export function getKeyByValue(object: any, value: any) {
-  return Object.keys(object).find(k => object[k] === value);
+    return Object.keys(object).find(k => object[k] === value);
 }
 
 /**
@@ -12,8 +12,8 @@ export function getKeyByValue(object: any, value: any) {
  * @param sleepMs Sleep time in milliseconds
  */
 export async function asyncSleep(sleepMs: number): Promise<void> {
-  await new Promise(r => setTimeout(r, sleepMs));
-  return;
+    await new Promise(r => setTimeout(r, sleepMs));
+    return;
 }
 
 /**
@@ -21,5 +21,12 @@ export async function asyncSleep(sleepMs: number): Promise<void> {
  * @param timestamp The current timestamp (int millisecond)
  */
 export function convertTimeStampToReadable(timestamp: number) {
-  return dayjs.unix(timestamp / 1000).format('YYYY-MM-DD HH:mm:ss');
+    return dayjs.unix(timestamp / 1000).format('YYYY-MM-DD HH:mm:ss');
+}
+
+/**
+ * Return true if the current running environment is browser-like,
+ */
+export function inBrowserEnv(): boolean {
+    return typeof window !== 'undefined';
 }

@@ -22,7 +22,7 @@ To generate a valid release zip file that could be directly used in server, run:
 npm run release
 ```
 
-This command will call:
+This command will actually execute:
 
 1. `npm run build`, or actually `next build` to generate static assets.
 2. `npm run archive_out` which will package up the `./out` directory into a zip file.

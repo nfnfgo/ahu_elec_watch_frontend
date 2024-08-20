@@ -13,7 +13,7 @@ import {backendBaseUrl} from '@/config/general';
 import {FlexDiv, Container, Center} from '@/components/container';
 import {Header, HeaderTitle} from '@/components/header';
 import {BalanceInfoBlock, StatisticBlock,} from '@/cus_components/balance';
-import {RecordsLineChart, PeriodUsageList} from '@/cus_components/records';
+import {RecentUsageLineChart, PeriodUsageList} from '@/cus_components/records';
 
 
 interface ErrorCardProps {

@@ -18,198 +18,307 @@ const {Column, ColumnGroup} = Table;
 import {FlexDiv, Container, Center} from '@/components/container';
 import {setDefault} from "@/tools/set_default";
 import {
-  StatisticIn, useGetRecentRecords,
-  PeriodUsageInfoIn, useGetPeriodUsage,
-  PeriodUnit,
+    StatisticIn, useGetRecentRecords, BalanceRecordIn,
+    PeriodUsageInfoIn, useGetPeriodUsage,
+    PeriodUnit,
 } from '@/api/info';
 import {errorPopper} from '@/exceptions/error';
 
 
-interface RecordsLineChartProps {
-  /**
-   * The days range of the info this graph will show. At least one day.
-   */
-  days: number;
-  /**
-   * Info type of this graph.
-   */
-  graphType?: 'balance' | 'usage';
+interface RecentUsageLineChartProps {
+    /**
+     * The days range of the info this graph will show. At least one day.
+     */
+    days: number;
+    /**
+     * Info type of this graph.
+     */
+    graphType?: 'balance' | 'usage';
+}
+
+export function RecentUsageLineChart(props: RecentUsageLineChartProps) {
+    const {
+        data: recordData,
+        isLoading,
+        error,
+    } = useGetRecentRecords(props.days, props.graphType ?? 'balance');
+
+    if (error) {
+        errorPopper(error);
+    }
+
+    let canvasRef = useRef();
+
+    return (
+        <RecordsLineChart
+            data={recordData}
+            noDataWarningElem={
+                <>
+                    <p>No record found for this period.</p>
+                    <p>Try using a larger time range and check again.</p>
+                </>
+            }
+        />
+    );
+}
+
+export interface RecordsLineChartProps {
+    /**
+     * List of BalanceRecordIn info.
+     */
+    data?: BalanceRecordIn[];
+    /**
+     * An object which could be a ReactNode, usually be a text block.
+     * Shown when the input list is empty or do not contain
+     * any info.
+     */
+    noDataWarningElem?: React.ReactNode;
 }
 
 export function RecordsLineChart(props: RecordsLineChartProps) {
-  const {
-    data: recordData,
-    isLoading,
-    error,
-  } = useGetRecentRecords(props.days, props.graphType ?? 'balance');
+    let {
+        data,
+        noDataWarningElem,
+    } = props;
+    noDataWarningElem ??= (
+        <>
+            <p>No valid records info found.</p>
+        </>
+    );
 
-  if (error) {
-    errorPopper(error);
-  }
+    let canvasRef = useRef();
 
-  let canvasRef = useRef();
+    return (
+        // Root Div Part
+        <FlexDiv
+            className={classNames(
+                'relative flex-none w-full',
+            )}>
 
-  return (
-    <FlexDiv
-      className={classNames(
-        'relative flex-none w-full',
-      )}>
-      {(recordData?.length ?? 0) < 1 && <FlexDiv className={classNames(
-        'absolute w-full h-full'
-      )}>
-          {/*No Data Dialog Part*/}
-          <Center><FlexDiv className={classNames(
-            'backdrop-blur-[4px] bg-grey/10',
-            'shadow-black/10 shadow-md',
-            'p-2 rounded-md',
-            'flex-col justify-start items-center',
-          )}>
-              <p>No record found for this period.</p>
-              <p>Try using a larger time range and check again.</p>
-          </FlexDiv></Center>
-      </FlexDiv>}
-      <Line
-        className={classNames(
-          'flex flex-auto h-full w-full bg-fgcolor dark:bg-fgcolor-dark p-4',
-          'rounded-2xl',
-        )}
-        ref={canvasRef}
-        options={{
-          responsive: true,
-          maintainAspectRatio: true,
-          backgroundColor: 'transparent',
-          scales: {
-            x: {
-              ticks: {},
-              type: 'time',
-              time: {
-                minUnit: 'hour',
-                displayFormats: {},
-              }
-            }
-          },
-          plugins: {
-            tooltip: {
-              intersect: false,
-            }
-          },
-        }}
-        data={{
-          datasets: [
-            {
-              label: 'Illumination Usage',
-              data: recordData?.map((d) => (d.light_balance)) ?? [],
-              borderColor: 'rgba(10,186,0,0.54)',
-              backgroundColor: 'green',
-            },
-            {
-              label: 'Air Conditioner Usage',
-              data: recordData?.map((d) => (d.ac_balance)) ?? [],
-              borderColor: 'rgba(0,123,172,0.54)',
-              backgroundColor: 'blue',
-            }
-          ],
-          labels: recordData?.map((d) => (d.timestamp * 1000)) ?? []
-        }}/>
-    </FlexDiv>
-  );
+            {/*No Data Dialog Part*/}
+            {(data?.length ?? 0) < 1 && <FlexDiv className={classNames(
+                'absolute w-full h-full'
+            )}>
+                <Center><FlexDiv className={classNames(
+                    'backdrop-blur-[4px] bg-grey/10',
+                    'shadow-black/10 shadow-md',
+                    'p-2 rounded-md',
+                    'flex-col justify-start items-center',
+                )}>
+                    {noDataWarningElem}
+                </FlexDiv></Center>
+            </FlexDiv>}
+
+            {/*Line Chart Part*/}
+            <Line
+                className={classNames(
+                    'flex flex-auto h-full w-full bg-fgcolor dark:bg-fgcolor-dark p-4',
+                    'rounded-2xl',
+                )}
+                ref={canvasRef}
+                options={{
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    backgroundColor: 'transparent',
+                    scales: {
+                        x: {
+                            ticks: {},
+                            type: 'time',
+                            time: {
+                                minUnit: 'hour',
+                                displayFormats: {},
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            intersect: false,
+                        }
+                    },
+                }}
+                data={{
+                    datasets: [
+                        {
+                            label: 'Illumination',
+                            data: data?.map((d) => (d.light_balance)) ?? [],
+                            borderColor: 'rgba(10,186,0,0.54)',
+                            backgroundColor: 'green',
+                        },
+                        {
+                            label: 'Air Conditioner',
+                            data: data?.map((d) => (d.ac_balance)) ?? [],
+                            borderColor: 'rgba(0,123,172,0.54)',
+                            backgroundColor: 'blue',
+                        }
+                    ],
+                    labels: data?.map((d) => (d.timestamp * 1000)) ?? []
+                }}/>
+        </FlexDiv>);
+}
+
+/**
+ * Function that passed to antd Table component as a column data renderer for start and end timestamp.
+ */
+function timestampColumnRenderer(timestamp: number) {
+    let dayjsIns = dayjs.unix(timestamp);
+    return (<p className={classNames(
+        'whitespace-nowrap',
+    )}>
+        {dayjsIns.format('MM/DD')}
+    </p>);
 }
 
 interface PeriodUsageProps {
-  /**
-   * The period unit of the info.
-   */
-  period: PeriodUnit;
-  /**
-   * Number of periods shows in the table.
-   */
-  period_count: number;
-  /**
-   * If `true`, the latest info will at the beginning.
-   */
-  recent_on_top: boolean;
+    /**
+     * The period unit of the info.
+     */
+    period: PeriodUnit;
+    /**
+     * Number of periods shows in the table.
+     */
+    period_count: number;
+    /**
+     * If `true`, the latest info will at the beginning.
+     */
+    recent_on_top: boolean;
 }
 
 export function PeriodUsageList(props: PeriodUsageProps) {
 
-  const {
-    data,
-    isLoading,
-    error,
-  } = useGetPeriodUsage(props.period, props.period_count, props.recent_on_top);
+    const {
+        data,
+        isLoading,
+        error,
+    } = useGetPeriodUsage(props.period, props.period_count, props.recent_on_top);
 
-  if (error) {
-    errorPopper(error);
-  }
-
-  /**
-   * Function that passed to antd Table component as a column data renderer for usage info.
-   */
-  function usageColumnRendererInner(usage: number, infoType: 'light' | 'ac' = 'light') {
-    let days = 1;
-    if (props.period == 'week') {
-      days = 7;
-    }
-    if (props.period == 'month') {
-      days = 30;
+    if (error) {
+        errorPopper(error);
     }
 
-    return (<Tooltip
-      title={`${(usage / days).toFixed(2)} kW/day`}
-      placement='leftBottom'>
-      <p className={classNames(
-        'font-mono',
-        infoType == 'ac' ? 'text-blue dark:text-blue-light' : '',
-        infoType == 'light' ? 'text-green dark:text-green-light' : '',
-      )}>{usage.toFixed(2)}</p>
-    </Tooltip>);
-  }
+    /**
+     * Function that passed to antd Table component as a column data renderer for usage info.
+     */
+    function usageColumnRendererInner(usage: number, infoType: 'light' | 'ac' = 'light') {
+        let days = 1;
+        if (props.period == 'week') {
+            days = 7;
+        }
+        if (props.period == 'month') {
+            days = 30;
+        }
 
-  function usageColumnRendererGen(infoType: 'light' | 'ac' = 'light') {
-    return function (value: number) {
-      return usageColumnRendererInner(value, infoType);
+        return (<Tooltip
+            title={`${(usage / days).toFixed(2)} kW/day`}
+            placement='leftBottom'>
+            <p className={classNames(
+                'font-mono',
+                infoType == 'ac' ? 'text-blue dark:text-blue-light' : '',
+                infoType == 'light' ? 'text-green dark:text-green-light' : '',
+            )}>{usage.toFixed(2)}</p>
+        </Tooltip>);
     }
-  }
 
-  /**
-   * Function that passed to antd Table component as a column data renderer for start and end timestamp.
-   */
-  function timestampColumnRenderer(timestamp: number) {
-    let dayjsIns = dayjs.unix(timestamp);
-    return (<p className={classNames(
-      'whitespace-nowrap',
-    )}>
-      {dayjsIns.format('MM/DD')}
-    </p>);
-  }
+    // A function generator that could generate the render() method of balance field for antd table.
+    function usageColumnRendererGen(infoType: 'light' | 'ac' = 'light') {
+        return function (value: number) {
+            return usageColumnRendererInner(value, infoType);
+        }
+    }
 
 
-  return (
-    <FlexDiv
-      className={classNames(
-        'flex-none flex-col w-full',
-      )}
-    >
-      <Table
-        // style={{
-        //   width: '100%'
-        // }}
-        sticky={true}
-        loading={isLoading}
-        pagination={false}
-        dataSource={data}
-        className={classNames(
-          'rounded-xl'
+    return (
+        <FlexDiv
+            className={classNames(
+                'flex-none flex-col w-full',
+            )}
+        >
+            <Table
+                // style={{
+                //   width: '100%'
+                // }}
+                sticky={true}
+                loading={isLoading}
+                pagination={false}
+                dataSource={data}
+                className={classNames(
+                    'rounded-xl'
+                )}>
+                <Column title='From' dataIndex='start_time' key='start_time' render={timestampColumnRenderer}
+                        width={80}/>
+                <Column title='To' dataIndex='end_time' key='end_time' render={timestampColumnRenderer} width={80}/>
+                <ColumnGroup title='Usage'>
+                    <Column title='Illumination' dataIndex='light_usage' key='light_usage'
+                            render={usageColumnRendererGen('light')}/>
+                    <Column title='Air Conditioner' dataIndex='ac_usage' key='ac_usage'
+                            render={usageColumnRendererGen('ac')}/>
+                </ColumnGroup>
+            </Table>
+        </FlexDiv>
+    );
+}
+
+export interface RecordsListProps {
+    data: BalanceRecordIn[];
+    isLoading: boolean;
+}
+
+/**
+ * Table component used to show a list of balance or usage info.
+ */
+export function RecordsList(props: RecordsListProps) {
+
+    const [pageSize, setPageSize] = useState(10);
+
+    /**
+     * Inner function used by balanceRenderGen()
+     */
+    function usageColumnRendererInner(usage: number, infoType: 'light' | 'ac' = 'light') {
+        return (<p className={classNames(
+            'font-mono',
+            infoType == 'ac' ? 'text-blue dark:text-blue-light' : '',
+            infoType == 'light' ? 'text-green dark:text-green-light' : '',
+        )}>{usage.toFixed(2)}</p>);
+    }
+
+    function balanceRenderGen(dataType: 'light' | 'ac') {
+        return function (value: any) {
+            return usageColumnRendererInner(value, dataType);
+        }
+    }
+
+    /**
+     * Function that passed to antd Table component as a column data renderer for start and end timestamp.
+     */
+    function timeStampRenderer(timestamp: number) {
+        let dayjsIns = dayjs.unix(timestamp);
+        return (<p className={classNames(
+            'whitespace-nowrap',
         )}>
-        <Column title='From' dataIndex='start_time' key='start_time' render={timestampColumnRenderer} width={80}/>
-        <Column title='To' dataIndex='end_time' key='end_time' render={timestampColumnRenderer} width={80}/>
-        <ColumnGroup title='Usage'>
-          <Column title='Illumination' dataIndex='light_usage' key='light_usage'
-                  render={usageColumnRendererGen('light')}/>
-          <Column title='Air Conditioner' dataIndex='ac_usage' key='ac_usage'
-                  render={usageColumnRendererGen('ac')}/>
-        </ColumnGroup>
-      </Table>
-    </FlexDiv>
-  );
+            {dayjsIns.format('MM/DD hh:mm:ss')}
+        </p>);
+    }
+
+    return (
+        <Table
+            sticky={true}
+            loading={props.isLoading}
+            pagination={{
+                showQuickJumper: true,
+                showSizeChanger: true,
+                defaultPageSize: 10,
+                position: ['bottomCenter'],
+            }}
+            dataSource={props.data}
+            className={classNames(
+                'rounded-xl')}>
+            <Column title='Time' dataIndex='timestamp' key='timestamp' render={timeStampRenderer}
+                    width={160}/>
+            <ColumnGroup title='Data'>
+                <Column title='Illumination' dataIndex='light_balance' key='light_balance'
+                        render={balanceRenderGen('light')}/>
+                <Column title='Air Conditioner' dataIndex='ac_balance' key='ac_balance'
+                        render={balanceRenderGen('ac')}/>
+            </ColumnGroup>
+        </Table>
+    );
 }
