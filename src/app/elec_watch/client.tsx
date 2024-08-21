@@ -213,7 +213,7 @@ export function Client() {
                         'justify-center items-center'
                     )}>
                         <Link target='_blank' href={`${backendBaseUrl}/docs`}>Backend Interactive API Docs</Link>
-                        <Link target='_blank' href='https://github.com/NFSandbox/ahu_elec_watch_frontend'>Github
+                        <Link target='_blank' href='https://github.com/nfnfgo/ahu_elec_watch_frontend'>Github
                             Frontend
                             Repo</Link>
                         <Link target='_blank' href='https://github.com/orgs/NFSandbox/projects/1'>Github Project</Link>

@@ -4,7 +4,9 @@ A web frontend of AHU Elec Watch Project which helps you monitor the AHU usage o
 
 ![image](https://github.com/user-attachments/assets/59c929f8-f8ea-4ef3-b8d7-a516e355b8be)
 
-![image](https://github.com/user-attachments/assets/927d5f9c-99b2-4c37-8b69-c97ff6add056)
+![image](https://github.com/user-attachments/assets/bd59a501-3f7d-4dbd-9fc2-fe66a3ebd939)
+
+![image](https://github.com/user-attachments/assets/55f885f9-d49a-4a58-9af5-13774c4dba80)
 
 # Features
 

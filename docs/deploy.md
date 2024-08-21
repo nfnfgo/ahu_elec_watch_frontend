@@ -2,7 +2,8 @@
 
 You can set different backend URL address for `development` and `production` Node Environment separately.
 
-You need to create a new file named `general.tsx` in `./src/config` based on `general_example.tsx`, with the URL replaced by your own backend URL address.
+You need to create a new file named `general.tsx` in `./src/config` based on `general_example.tsx`, with the URL
+replaced by your own backend URL address.
 
 Checkout `src/config` directory for more info.
 
@@ -23,13 +24,16 @@ This command will actually execute:
 
 > Notice: The generated zip file will be in `./out` directory.
 
+Then you can upload the zip file and decompress it in your frontend website server directory.
+
 ## Generate ./out Directory Only
 
 If you don't want to generate the zip file and only want `./out` directory, then just run `next build`.
 
 # Nginx Configuration
 
-To ensure the Static Generation feature works on server, we may need to manually configure the rules of Nginx server:
+To ensure the Static Generation feature works on server, we may need to manually configure the rules of Nginx server for
+the frontend website:
 
 ```
 location / {
@@ -42,7 +46,9 @@ location / {
 
 This will allow us to directly access the path without using `.html` subfix like `example.com/records/period`
 
-> For more info about Static Export of Next.js, you could check out [this blog post](https://code.nfblogs.com/archives/next_js_static_export.html)
+> If you are using `aaPanel`/`Baota` dashboard on your server, you could directly copy the above settings into your website-level Nginx configuration.
+>
+> For more info about Static Export of Next.js, you could check out [this blog post](https://code.nfblogs.com/archives/next_js_static_export.html).
 
 -----
 

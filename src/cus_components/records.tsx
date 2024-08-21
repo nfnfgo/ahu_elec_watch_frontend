@@ -363,7 +363,7 @@ export function RecordsList(props: RecordsListProps) {
             className={classNames(
                 'rounded-xl')}>
             <Column title='Time' dataIndex='timestamp' key='timestamp' render={timeStampRenderer}
-                    width={160}/>
+                    width={120}/>
             <ColumnGroup title='Data'>
                 <Column title='Illumination' dataIndex='light_balance' key='light_balance'
                         render={balanceRenderGen('light')}/>
