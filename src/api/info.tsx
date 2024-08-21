@@ -1,9 +1,12 @@
 import useSWR from "swr";
 
 import {axiosIns} from './axios';
-import {apiErrorThrower, BaseError, ParamError} from '@/exceptions/error';
+import toast from "react-hot-toast";
 
+
+import {apiErrorThrower, BaseError, ParamError} from '@/exceptions/error';
 import {useSettingsStore} from '@/states/settings';
+
 
 export interface BalanceRecordIn {
     timestamp: number;
@@ -237,5 +240,60 @@ export function useGetRecordByTimeRange(start_time: number, end_time: number, in
     return useSWR(
         ['/info/get_records_by_time_range', start_time, end_time, info_type],
         (keys) => (getRecordsByTimeRange(keys[1], keys[2], keys[3])),
+    );
+}
+
+/**
+ * Delete records from the database by specifying a time range.
+ */
+export async function deleteRecordsByTimeRange(
+    start_time: number,
+    end_time: number,
+    dry_run: boolean = false): Promise<number> {
+
+    // param check
+    if (start_time > end_time) {
+        throw new ParamError('Start time must before end time when deleting records by time range.');
+    }
+    let data = undefined;
+
+    try {
+        let res = await axiosIns.get(
+            '/info/delete_records_by_time_range',
+            {
+                params: {
+                    start_time,
+                    end_time,
+                    dry_run,
+                }
+            },)
+        ;
+        data = res.data as number;
+    } catch (e) {
+        apiErrorThrower(e);
+    }
+
+    return data as number;
+}
+
+/**
+ * Wrapper of ``deleteRecordsByTimeRange()`` with react-hot-toast UI notification.
+ *
+ * Params:
+ * - Checkout ``deleteRecordsByTimeRange()`` for more info.
+ */
+export async function deleteRecordsWithToastNotification(
+    start_time: number,
+    end_time: number,
+    dry_run: boolean = false) {
+    return await toast.promise(
+        deleteRecordsByTimeRange(start_time, end_time, dry_run),
+        {
+            success: (data) => {
+                return `Successfully Delete ${data} record(s). Refresh to view changes.`
+            },
+            loading: 'Deleting...',
+            error: (e) => `Failed to delete, ${e.message} (${e?.name ?? 'unknown_error'})`
+        }
     );
 }

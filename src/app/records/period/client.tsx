@@ -23,6 +23,7 @@ import {DataTypeSegmented} from '@/cus_components/selections';
 
 
 import {useGetRecordByTimeRange} from '@/api/info';
+import {useGetMe} from '@/api/auth';
 import Loading from "@/app/loading";
 
 
@@ -68,6 +69,15 @@ export function Client() {
         infoType,
     );
 
+    // get current roles
+    const {
+        data: getMeData,
+    } = useGetMe();
+
+    // function that determine if we should show delete button in the table to user.
+    function shouldShowDeletionButton() {
+        return getMeData === 'admin' && infoType === 'balance';
+    }
 
     /**
      * Handle timestamp selection change from AntD Range Picker UI Component.
@@ -163,7 +173,7 @@ export function Client() {
                 <FlexDiv className={classNames(
                     'flex-none flex-col px-2 max-w-[50rem] w-full'
                 )}>
-                    <RecordsList data={data ?? []} isLoading={isLoading}/>
+                    <RecordsList data={data ?? []} isLoading={isLoading} showDeleteButton={shouldShowDeletionButton()}/>
                 </FlexDiv>
 
                 {/*Parameter Description Part*/}
@@ -191,6 +201,5 @@ export function Client() {
                 )}></FlexDiv>
             </FlexDiv>
         </FlexDiv>
-    )
-        ;
+    );
 }
