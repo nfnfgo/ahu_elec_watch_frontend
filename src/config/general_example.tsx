@@ -2,7 +2,7 @@
  * Backend URL address used for dev and prod node env.
  */
 export const devBackendBaseUrl = 'http://localhost:8000';
-export const prodBackendBaseUrl = 'https://api-ahuelec.nfblogs.com';
+export const prodBackendBaseUrl = 'https://your-own-backend-website.com';
 
 /**
  * Auto-selected backend API address.
