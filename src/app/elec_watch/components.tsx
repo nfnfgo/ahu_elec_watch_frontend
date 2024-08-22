@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import {Tooltip} from 'antd';
 
-import {BalanceRecordIn} from '@/api/info';
+import {BalanceRecordIn, useGetRecordsCount} from '@/api/info';
 import {FlexDiv} from "@/components/container";
 import {classNames} from "@/tools/css_tools";
 
@@ -78,3 +78,37 @@ export function LastUpdateInfoTag(props: LastUpdateInfoTagProps) {
   );
 }
 
+/**
+ * Footer component used to show records statistics
+ */
+export function RecordsStatisticsFooter() {
+  const {
+    data: recordsData,
+    isLoading,
+    error,
+  } = useGetRecordsCount();
+
+  if (isLoading) {
+    return 'Loading records statistics...';
+  }
+
+  if (error) {
+    return 'Failed to retrieve records statistics';
+  }
+
+  return (
+    <FlexDiv className={classNames(
+      'flex-none flex-col gap-y-2 ',
+      'sm:flex-row sm:gap-x-4',
+      'justify-center items-center'
+    )}>
+      <p>Records caught: <span className={classNames(
+          'font-bold font-mono'
+        )}>{recordsData!.total}</span>
+      </p>
+      <p>Last 7 days: <span className={classNames(
+        'font-bold font-mono'
+      )}>{recordsData!.last_7_days}</span></p>
+    </FlexDiv>
+  );
+}

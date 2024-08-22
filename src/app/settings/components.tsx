@@ -6,13 +6,14 @@ import {Form, Segmented, Tooltip, Input, Button, SegmentedProps, Switch, Flex, S
 import Link from 'next/link';
 
 import {classNames} from "@/tools/css_tools";
+import {promiseToastWithBaseErrorHandling} from '@/tools/general';
 import {backendBaseUrl} from '@/config/general';
 
 import {FlexDiv, Container, Center} from '@/components/container';
 import {ErrorCard} from '@/components/error';
 import {NoticeText} from '@/components/texts';
 
-import {useHeaderInfo, setAhuCredentialFromURL} from '@/api/ahu';
+import {useHeaderInfo, setAhuCredentialFromURL, getRecordsFromAhu, AhuRecordsIn} from '@/api/ahu';
 
 import {login, logout, useGetMe} from '@/api/auth';
 
@@ -154,6 +155,7 @@ export function AHULoginCredentialSettingsBlock() {
     );
   }
 
+  // Role auth passed
   return (
     <FlexDiv className={classNames(
       'w-full',
@@ -161,10 +163,14 @@ export function AHULoginCredentialSettingsBlock() {
       'flex-col gap-y-2',
     )}>
       <CredentialManagePart/>
+      <AhuTestingPart/>
     </FlexDiv>
   );
 }
 
+/**
+ * Component part used in AHULoginCredentialSettingsBlock.
+ */
 export function CredentialManagePart() {
 
   const {
@@ -252,5 +258,58 @@ export function CredentialManagePart() {
       <NoticeText hasColor={false}>Notice: AHU Header Authorization configuration is stored in backend
         and will not be persisted as frontend settings in the browser.</NoticeText>
     </>
+  );
+}
+
+/**
+ * Component part used in AHULoginCredentialSettingsBlock.
+ */
+export function AhuTestingPart() {
+  // states to store the test result
+  const [testRes, setTestRes]
+    = useState<AhuRecordsIn | undefined>(undefined);
+
+  /**
+   * Function used to handle user request of AHU api testing.
+   */
+  async function handleTestingRequest() {
+    // clear previous result
+    setTestRes(undefined);
+
+    // try get result from api.
+    let res = await promiseToastWithBaseErrorHandling(
+      getRecordsFromAhu(),
+      'Testing AHU website...',
+      function (data) {
+        return `AHU website test passed`
+      },
+    );
+
+    // update UI states.
+    setTestRes(res);
+  }
+
+  return (
+    <FlexDiv className={classNames(
+      'flex-col gap-y-2',
+    )}>
+      <Button onClick={handleTestingRequest}>Test AHU Website Connection</Button>
+      {testRes !== undefined && (
+        <>
+          <div className={classNames(
+            'font-mono'
+          )}>
+            <p className={classNames(
+              'text-green dark:text-green-light font-bold'
+            )}>Test Passed.</p>
+            <p>Latency: {testRes.latency_ms} ms</p>
+            <p>Data:</p>
+            <pre className={classNames(
+              'text-wrap'
+            )}>{JSON.stringify(testRes.record, undefined, ' ')}</pre>
+          </div>
+        </>
+      )}
+    </FlexDiv>
   );
 }

@@ -45,3 +45,33 @@ export async function setAhuCredentialFromURL(url: string) {
 
   return data;
 }
+
+export interface AhuRecordsIn {
+  record: BalanceRecordIn,
+  latency_ms: number;
+}
+
+/**
+ * Directly catch records from AHU website.
+ * Checkout backend API for more info.
+ *
+ * Params:
+ *
+ * - ``dry_run`` If true, do not add the record to the database.
+ */
+export async function getRecordsFromAhu(dry_run: boolean = true): Promise<AhuRecordsIn> {
+  let data = undefined;
+
+  try {
+    let res = await axiosIns.get('/ahu/catch_record', {
+      params: {
+        dry_run
+      }
+    });
+    data = res.data as AhuRecordsIn;
+  } catch (e) {
+    apiErrorThrower(e);
+  }
+
+  return data as AhuRecordsIn;
+}

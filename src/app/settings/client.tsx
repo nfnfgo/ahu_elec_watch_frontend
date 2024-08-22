@@ -15,174 +15,179 @@ import * as comp from './components';
 import {Title} from '@/components/title';
 
 import {
-  useSettingsStore,
-  Settings,
+    useSettingsStore,
+    Settings,
 } from '@/states/settings';
 import {
-  ChartItemCountSegmented,
-  ChartTimeRangeSegmented,
-  DataTypeSegmented,
-  DiagramDaysRangeSegmented
+    ChartItemCountSegmented,
+    ChartTimeRangeSegmented,
+    DataTypeSegmented,
+    DiagramDaysRangeSegmented
 } from "@/cus_components/selections";
 
 
 export function Client() {
-  const settings = useSettingsStore((state) => (state.settings));
+    const settings = useSettingsStore((state) => (state.settings));
 
-  const
-    updateKey = useSettingsStore((state) => (state.updateKey));
+    const
+        updateKey = useSettingsStore((state) => (state.updateKey));
 
-  const
-    resetSettings = useSettingsStore((state) => (state.reset));
+    const
+        resetSettings = useSettingsStore((state) => (state.reset));
 
-  const exportToClipboard = useSettingsStore(state => state.exportToClipboard);
-  const importFromClipboard = useSettingsStore(state => state.importFromClipboard);
+    const exportToClipboard = useSettingsStore(state => state.exportToClipboard);
+    const importFromClipboard = useSettingsStore(state => state.importFromClipboard);
 
-  const [curNewSettingsStr, setCurNewSettingsStr] = useState<string>('');
-  return (
-    // Root Div
-    <FlexDiv expand className={classNames(
-      'flex-none flex-col justify-start items-center',
-    )}>
-
-      {/*Header Part*/}
-      <Header link='/elec_watch'><HeaderTitle>Settings - AHU Elec Watch</HeaderTitle></Header>
-
-      {/*Content Root Div*/}
-      <FlexDiv
-        expand
-        className={classNames(
-          'flex-col justify-start items-center',
-          'overflow-y-auto',
+    const [curNewSettingsStr, setCurNewSettingsStr] = useState<string>('');
+    return (
+        // Root Div
+        <FlexDiv expand className={classNames(
+            'flex-none flex-col justify-start items-center',
         )}>
 
-        {/*Account Login / Info Part*/}
-        <FlexDiv className={classNames(
-          'flex-col flex-none gap-y-2 max-w-[50rem] w-full p-2 items-center'
-        )}>
-          <Title>Account / Roles</Title>
-          <comp.AccountInfoBlock/>
+            {/*Header Part*/}
+            <Header link='/elec_watch'><HeaderTitle>Settings - AHU Elec Watch</HeaderTitle></Header>
+
+            {/*Content Root Div*/}
+            <FlexDiv
+                expand
+                className={classNames(
+                    'flex-col justify-start items-center',
+                    'overflow-y-auto',
+                )}>
+
+                {/*Account Login / Info Part*/}
+                <FlexDiv className={classNames(
+                    'flex-col flex-none gap-y-2 max-w-[50rem] w-full p-2 items-center'
+                )}>
+                    <Title>Account / Roles</Title>
+                    <comp.AccountInfoBlock/>
+                </FlexDiv>
+
+                {/*Data Showing Part*/}
+                <FlexDiv className={classNames(
+                    'flex-col flex-none gap-y-2 max-w-[50rem] w-full p-2 items-center'
+                )}>
+                    <Title>Data Showing</Title>
+
+                    {/*Diagram Days Default*/}
+                    <SettingsTile title={'Default Line Chart Days Range'}>
+                        <DiagramDaysRangeSegmented
+                            value={settings.diagramDays}
+                            onChange={function (newValue) {
+                                updateKey('diagramDays', newValue);
+                            }}/>
+                    </SettingsTile>
+
+                    {/*Diagram Days Default*/}
+                    <SettingsTile title={'Default Diagrams Data Type'}>
+                        <DataTypeSegmented
+                            value={settings.diagramType}
+                            onChange={updateKey.bind(undefined, 'diagramType')}/>
+                    </SettingsTile>
+
+                    {/*Chart Time Range*/}
+                    <SettingsTile title={'Default Chart Period'}>
+                        <ChartTimeRangeSegmented
+                            value={settings.chartTimeRange}
+                            onChange={updateKey.bind(undefined, 'chartTimeRange')}/>
+                    </SettingsTile>
+
+                    {/*Chart Time Range*/}
+                    <SettingsTile title={'Default Chart Items'}>
+                        <ChartItemCountSegmented
+                            value={settings.chartItemsCount}
+                            onChange={updateKey.bind(undefined, 'chartItemsCount')}/>
+                    </SettingsTile>
+                </FlexDiv>
+
+                {/*Usage List Converting Part*/}
+                <FlexDiv className={classNames(
+                    'flex-col flex-none gap-y-2 max-w-[50rem] w-full p-2 items-center',
+                )}>
+                    <Title>Usage List Converting</Title>
+
+                    <SettingsTile title='Points Spreading' colWhenSmall={false}>
+                        <Switch checked={settings.usageSpreading}
+                                onChange={updateKey.bind(undefined, 'usageSpreading')}></Switch>
+                    </SettingsTile>
+
+                    <SettingsTile title='Points Smoothing' colWhenSmall={false}>
+                        <Switch checked={settings.usageSmoothing}
+                                onChange={updateKey.bind(undefined, 'usageSmoothing')}></Switch>
+                    </SettingsTile>
+
+                    <SettingsTile title='Points Smart Merge' colWhenSmall={false}>
+                        <Switch checked={settings.usageSmartMerge}
+                                onChange={updateKey.bind(undefined, 'usageSmartMerge')}></Switch>
+                    </SettingsTile>
+
+                    <SettingsTile title='Usage/Hour as Unit' colWhenSmall={false}>
+                        <Switch checked={settings.usagePreHourUnit} disabled
+                                onChange={updateKey.bind(undefined, 'usagePreHourUnit')}></Switch>
+                    </SettingsTile>
+                </FlexDiv>
+
+                {/*AHU Credential Settings Part*/}
+                <FlexDiv className={classNames(
+                    'flex-col flex-none gap-y-2 max-w-[50rem] w-full p-2 items-center',
+                )}>
+                    <Title>AHU Credential Configuration</Title>
+                    <comp.AHULoginCredentialSettingsBlock/>
+                </FlexDiv>
+
+                {/*Backup Import/Export Reset All Settings Part*/}
+                <FlexDiv className={classNames(
+                    'flex-col flex-none gap-y-2 max-w-[50rem] w-full p-2 items-center'
+                )}>
+                    <Title>Import/Export & Reset All</Title>
+
+                    <FlexDiv className={classNames(
+                        'flex-col gap-y-2 p-2 w-full',
+                        'bg-fgcolor dark:bg-fgcolor-dark rounded-xl',
+                    )}>
+                        <Button className='w-full' type='primary' onClick={exportToClipboard}>Copy Settings JSON to
+                            Clipboard</Button>
+                        <Button className='w-full' onClick={importFromClipboard}>Import Settings From Clipboard</Button>
+                        <Button className='w-full' danger onClick={resetSettings}>Reset All Settings</Button>
+                    </FlexDiv>
+                </FlexDiv>
+
+                {/*Bottom Empty Space*/}
+                <FlexDiv className='min-h-[5rem]'></FlexDiv>
+
+
+            </FlexDiv>
         </FlexDiv>
-
-        {/*Data Showing Part*/}
-        <FlexDiv className={classNames(
-          'flex-col flex-none gap-y-2 max-w-[50rem] w-full p-2 items-center'
-        )}>
-          <Title>Data Showing</Title>
-
-          {/*Diagram Days Default*/}
-          <SettingsTile title={'Default Line Chart Days Range'}>
-            <DiagramDaysRangeSegmented
-              value={settings.diagramDays}
-              onChange={function (newValue) {
-                updateKey('diagramDays', newValue);
-              }}/>
-          </SettingsTile>
-
-          {/*Diagram Days Default*/}
-          <SettingsTile title={'Default Diagrams Data Type'}>
-            <DataTypeSegmented
-              value={settings.diagramType}
-              onChange={updateKey.bind(undefined, 'diagramType')}/>
-          </SettingsTile>
-
-          {/*Chart Time Range*/}
-          <SettingsTile title={'Default Chart Period'}>
-            <ChartTimeRangeSegmented
-              value={settings.chartTimeRange}
-              onChange={updateKey.bind(undefined, 'chartTimeRange')}/>
-          </SettingsTile>
-
-          {/*Chart Time Range*/}
-          <SettingsTile title={'Default Chart Items'}>
-            <ChartItemCountSegmented
-              value={settings.chartItemsCount}
-              onChange={updateKey.bind(undefined, 'chartItemsCount')}/>
-          </SettingsTile>
-        </FlexDiv>
-
-        {/*Usage List Converting Part*/}
-        <FlexDiv className={classNames(
-          'flex-col flex-none gap-y-2 max-w-[50rem] w-full p-2 items-center',
-        )}>
-          <Title>Usage List Converting</Title>
-
-          <SettingsTile title='Points Spreading' colWhenSmall={false}>
-            <Switch checked={settings.usageSpreading} onChange={updateKey.bind(undefined, 'usageSpreading')}></Switch>
-          </SettingsTile>
-
-          <SettingsTile title='Points Smoothing' colWhenSmall={false}>
-            <Switch checked={settings.usageSmoothing} onChange={updateKey.bind(undefined, 'usageSmoothing')}></Switch>
-          </SettingsTile>
-
-          <SettingsTile title='Points Smart Merge' colWhenSmall={false}>
-            <Switch checked={settings.usageSmartMerge} onChange={updateKey.bind(undefined, 'usageSmartMerge')}></Switch>
-          </SettingsTile>
-
-          <SettingsTile title='Usage/Hour as Unit' colWhenSmall={false}>
-            <Switch checked={settings.usagePreHourUnit} disabled
-                    onChange={updateKey.bind(undefined, 'usagePreHourUnit')}></Switch>
-          </SettingsTile>
-        </FlexDiv>
-
-        <FlexDiv className={classNames(
-          'flex-col flex-none gap-y-2 max-w-[50rem] w-full p-2 items-center',
-        )}>
-          <Title>AHU Credential Configuration</Title>
-          <comp.AHULoginCredentialSettingsBlock/>
-        </FlexDiv>
-
-        {/*Backup Import/Export Reset All Settings Part*/}
-        <FlexDiv className={classNames(
-          'flex-col flex-none gap-y-2 max-w-[50rem] w-full p-2 items-center'
-        )}>
-          <Title>Import/Export & Reset All</Title>
-
-          <FlexDiv className={classNames(
-            'flex-col gap-y-2 p-2 w-full',
-            'bg-fgcolor dark:bg-fgcolor-dark rounded-xl',
-          )}>
-            <Button className='w-full' type='primary' onClick={exportToClipboard}>Copy Settings JSON to Clipboard</Button>
-            <Button className='w-full' onClick={importFromClipboard}>Import Settings From Clipboard</Button>
-            <Button className='w-full' danger onClick={resetSettings}>Reset All Settings</Button>
-          </FlexDiv>
-        </FlexDiv>
-
-        {/*Bottom Empty Space*/}
-        <FlexDiv className='min-h-[5rem]'></FlexDiv>
-
-
-      </FlexDiv>
-    </FlexDiv>
-  );
+    );
 }
 
 interface SegmentedSettingsTileProps<T extends keyof Settings> {
-  settingsName: T;
-  title: string;
-  children: ReactNode;
+    settingsName: T;
+    title: string;
+    children: ReactNode;
 }
 
 interface SettingsTileProps {
-  title: string;
-  colWhenSmall?: boolean;
-  children: ReactNode;
+    title: string;
+    colWhenSmall?: boolean;
+    children: ReactNode;
 }
 
 function SettingsTile(props: SettingsTileProps) {
-  let colWhenSmall = props.colWhenSmall;
-  colWhenSmall ??= true;
-  return (
-    <FlexDiv className={classNames(
-      'flex-none w-full gap-2 p-2',
-      colWhenSmall ? 'flex-col sm:flex-row' : 'flex-row',
-      'justify-between items-center',
-      'bg-fgcolor dark:bg-fgcolor-dark rounded-xl',
-    )}>
-      {props.title}
-      {props.children}
-    </FlexDiv>
-  );
+    let colWhenSmall = props.colWhenSmall;
+    colWhenSmall ??= true;
+    return (
+        <FlexDiv className={classNames(
+            'flex-none w-full gap-2 p-2',
+            colWhenSmall ? 'flex-col sm:flex-row' : 'flex-row',
+            'justify-between items-center',
+            'bg-fgcolor dark:bg-fgcolor-dark rounded-xl',
+        )}>
+            {props.title}
+            {props.children}
+        </FlexDiv>
+    );
 }
 
 
