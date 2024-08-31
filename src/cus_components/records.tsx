@@ -115,7 +115,7 @@ export function RecordsLineChart(props: RecordsLineChartProps) {
             {/*Line Chart Part*/}
             <Line
                 className={classNames(
-                    'flex flex-auto h-full w-full bg-fgcolor dark:bg-fgcolor-dark p-4',
+                    'flex flex-none h-full w-full bg-fgcolor dark:bg-fgcolor-dark p-4',
                     'rounded-2xl',
                 )}
                 ref={canvasRef}
