@@ -33,6 +33,6 @@ body {
 
 @layer base {
     a {
-        @apply text-blue dark:text-blue-light hover:underline hover:font-bold transition-all;
+        @apply text-blue dark:text-blue-light hover:underline transition-all;
     }
 }

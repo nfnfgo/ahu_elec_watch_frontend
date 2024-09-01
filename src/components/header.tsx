@@ -32,7 +32,7 @@ export function Header(props: HeaderProps) {
     // Responsive Margin
     <FlexDiv
       className={classNames(
-        'w-full p-0 md:p-2 z-10',
+        'w-full z-10',
         'flex-none',
         'transition-all')}>
 
@@ -40,14 +40,17 @@ export function Header(props: HeaderProps) {
       <FlexDiv
         className={classNames(
           'bg-fgcolor dark:bg-fgcolor-dark',
-          'w-full p-2 shadow-xl',
-          'md:rounded-xl',
+          'w-full p-2 shadow-lg',
           'transition-all',
           'flex-row justify-between',
         )}>
 
         {/*Link Wrapper For Children Content*/}
-        <Link href={link ?? '#'}>
+        <Link
+          href={link ?? '#'}
+          className={classNames(
+            'hover:no-underline hover:scale-[1.02]',
+          )}>
           {children}
         </Link>
 

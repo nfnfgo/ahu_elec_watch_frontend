@@ -8,6 +8,11 @@ import Link from 'next/link';
 import {classNames} from "@/tools/css_tools";
 import {backendBaseUrl} from '@/config/general';
 
+import {TbSettings2} from "react-icons/tb";
+import {FaGithub} from "react-icons/fa";
+import {FaCode} from "react-icons/fa";
+import {FaClipboardList} from "react-icons/fa";
+
 import {FlexDiv, Container, Center} from '@/components/container';
 import {Header, HeaderTitle} from '@/components/header';
 import {BalanceInfoBlock, StatisticBlock,} from '@/cus_components/balance';
@@ -202,7 +207,11 @@ export function Client() {
             'flex-col flex-none w-full p-2 items-center max-w-[50rem]',
           )}>
             <Link className='w-full' href='/settings'>
-              <Button className='w-full'>Settings</Button>
+              <Button className='w-full'>
+                <p>
+                  <TbSettings2 className={'inline-block align-text-bottom'}/> Settings
+                </p>
+              </Button>
             </Link>
           </FlexDiv>
 
@@ -212,13 +221,18 @@ export function Client() {
             'flex-none flex-col sm:flex-row gap-2 sm:gap-4',
             'justify-center items-center'
           )}>
-            <Link target='_blank' href={`${backendBaseUrl}/docs`}>Backend Interactive API Docs</Link>
-            <Link target='_blank' href='https://github.com/nfnfgo/ahu_elec_watch_frontend'>Github
-              Frontend
-              Repo</Link>
-            <Link target='_blank' href='https://github.com/orgs/NFSandbox/projects/1'>Github Project</Link>
+            <Link target='_blank' href={`${backendBaseUrl}/docs`}>
+              <p>
+                <FaCode className='inline-block align-middle'/> Backend Interactive API Docs
+              </p>
+            </Link>
+            <Link target='_blank' href='https://github.com/nfnfgo/ahu_elec_watch_frontend'>
+              <FaGithub className={'inline-block align-middle'}/> Github Frontend Repo
+            </Link>
+            <Link target='_blank' href='https://github.com/orgs/NFSandbox/projects/1'>
+              <FaClipboardList className='inline-block align-middle'/> Github Project
+            </Link>
           </FlexDiv>
-
           {/*Records Statistics Footer Part*/}
           <comp.RecordsStatisticsFooter></comp.RecordsStatisticsFooter>
 

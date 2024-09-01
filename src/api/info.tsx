@@ -68,6 +68,49 @@ export function useGetStatistics() {
   return useSWR('/info/statistics', getStatistics);
 }
 
+/**
+ * The field is identical with the backend endpoint
+ */
+export interface TimeRangeStatisticsIn {
+  total_usage_light: number;
+  total_usage_ac: number;
+  avg_usage_light: number;
+  avg_usage_ac: number;
+  start_timestamp: number;
+  end_timestamp: number;
+  point_used: number;
+}
+
+/**
+ * Get statistics based on the time range.
+ * @param start_time
+ * @param end_time
+ */
+export async function getTimeRangeStatistics(start_time: number, end_time?: number): Promise<TimeRangeStatisticsIn> {
+  let data = undefined;
+  try {
+    let res = await axiosIns.get(
+      '/info/statistics/time_range',
+      {
+        params: {
+          start_time,
+          end_time,
+        }
+      });
+    data = res.data;
+  } catch (e) {
+    apiErrorThrower(e);
+  }
+  data = data as TimeRangeStatisticsIn;
+  return data;
+}
+
+export function useGetTimeRangeStatistics(start_time: number, end_time?: number) {
+  return useSWR(['/info/statistics/time_range', start_time, end_time], function (keys) {
+    return getTimeRangeStatistics(keys[1], keys[2]);
+  })
+}
+
 
 /**
  * Get recent records starting from several days ago.

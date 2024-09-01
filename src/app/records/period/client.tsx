@@ -18,11 +18,11 @@ import {inBrowserEnv} from '@/tools/general';
 import {Header, HeaderTitle} from "@/components/header";
 import {NoticeText} from '@/components/texts';
 import {Title} from '@/components/title';
-import {RecordsLineChart, RecordsList} from '@/cus_components/records';
+import {RecordsLineChart, RecordsList, TimeRangeStatistics,} from '@/cus_components/records';
 import {DataTypeSegmented} from '@/cus_components/selections';
 
 
-import {useGetRecordByTimeRange} from '@/api/info';
+import {useGetRecordByTimeRange, useGetTimeRangeStatistics} from '@/api/info';
 import {useGetMe} from '@/api/auth';
 import Loading from "@/app/loading";
 
@@ -50,6 +50,7 @@ export function Client() {
     }
   }
 
+  // initial input params, retrieved from user input URL
   const _startTime = extractParamTimestamp('start');
   const _endTime = extractParamTimestamp('end');
 
@@ -119,7 +120,7 @@ export function Client() {
     <FlexDiv
       expand
       className={classNames(
-        'flex-col flex-none gap-y-2',
+        'flex-col flex-none',
       )}>
 
       {/*Header Part*/}
@@ -132,12 +133,12 @@ export function Client() {
         expand
         className={classNames(
           'justify-start items-center',
-          'flex-col gap-y-2 overflow-y-auto',
+          'flex-col gap-y-2 overflow-y-auto p-2',
         )}>
 
         {/*Date Range Picker Part*/}
         <FlexDiv className={classNames(
-          'flex-none flex-col gap-y-2 p-2 w-full max-w-[50rem] justify-start items-center'
+          'flex-none flex-col gap-y-2 w-full max-w-[50rem] justify-start items-center'
         )}>
           <RangePicker
             className='w-full'
@@ -151,7 +152,7 @@ export function Client() {
         {/*Line Chart Part*/}
         <FlexDiv
           className={classNames(
-            'flex-none flex-col p-2 justify-start items-center',
+            'flex-none flex-col justify-start items-center',
             'w-full max-w-[80rem]',
           )}>
           <RecordsLineChart
@@ -165,13 +166,25 @@ export function Client() {
           />
         </FlexDiv>
 
+        {/*Statistics Title*/}
+        <Title>Statistics</Title>
+
+        {/*Time Range Statistics Part*/}
+        <FlexDiv className={classNames(
+          'flex-none max-w-[50rem] justify-start items-center',
+          'w-full'
+        )}>
+          <TimeRangeStatistics startTime={startTime} endTime={endTime}/>
+        </FlexDiv>
+
         {/*Records Info Table Part*/}
         <Title>
           {infoType === 'usage' ? 'Usage' : 'Balance'}
         </Title>
 
         <FlexDiv className={classNames(
-          'flex-none flex-col px-2 max-w-[50rem] w-full'
+          'flex-none flex-col px-2 max-w-[50rem] w-full',
+          'rounded-xl bg-fgcolor dark:bg-fgcolor-dark overflow-hidden'
         )}>
           <RecordsList data={data ?? []} isLoading={isLoading} showDeleteButton={shouldShowDeletionButton()}/>
         </FlexDiv>
